@@ -11,7 +11,6 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Subfolders Demo</title>
-
 <style>
 
 :root{--blue:#0070F4;--lblue:#E6F0FF;--gray:#999;--line:#EEE;--yellow:#F0CF6D;--txt:#000;--sub:#5B6A91}
@@ -602,10 +601,21 @@ body{flex-wrap:wrap}
 .pth.nop .ic{stroke:#1E3A5F}
 .pth.gen{background:var(--blue)}
 .s2done{padding:10px 16px 34px;background:#fff}
+
+/* ---- team switch + empty home ---- */
+.teamrow{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer}
+.teamrow.on{background:#F5F9FF}
+.teamrow .main{flex:1;min-width:0}.teamrow .t{font-size:17px;font-weight:500}.teamrow .m{font-size:13px;color:#999;margin-top:2px}
+.tav{width:42px;height:42px;border-radius:10px;color:#fff;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.tav.add{background:#EBF3FE}
+.hsub{font-size:15px;color:#888;padding:6px 16px 0}
+.hcreate{margin:12px 16px 0;width:100px;height:56px;border-radius:6px;background:#EBF3FE;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hcreate .ic{width:30px;height:30px}
+.mcard.invite{background:#fff;border:1.5px dashed #D5DAE1;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.mcard.invite .ic{width:30px;height:30px}
 </style>
 <style>
 *{-webkit-tap-highlight-color:transparent}
-/* full-screen app for phones: no frame, no fake status bar, no side panel */
 html,body{height:100%}
 body{display:block;padding:0;min-height:0;background:#fff;overflow:hidden}
 .phone{position:fixed;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:auto;padding:0;border-radius:0;background:#fff;box-shadow:none}
@@ -616,9 +626,9 @@ body{display:block;padding:0;min-height:0;background:#fff;overflow:hidden}
 .sheet.sel2{top:150px}
 @media (min-width:600px){body{background:#E9ECF1}.phone{box-shadow:0 0 0 1px #D5D9E0}}
 </style>
-
 </head>
 <body>
+
 <div class="phone"><div class="device" id="device">
   <div class="status" id="status"><span>9:41</span><span class="icons"><svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg><svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.1-1.1A9.8 9.8 0 008 1 9.8 9.8 0 001 3.8l1.1 1.1A8.3 8.3 0 018 2.5zm0 3c1.5 0 2.8.6 3.8 1.5l1.1-1.1A6.9 6.9 0 008 4a6.9 6.9 0 00-4.9 1.9L4.2 7C5.2 6.1 6.5 5.5 8 5.5zm0 3c.7 0 1.3.3 1.7.7L8 11 6.3 9.2c.4-.4 1-.7 1.7-.7z" fill="currentColor"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="1.8" fill="currentColor"/><rect x="23" y="4" width="1.5" height="4" rx=".7" fill="currentColor" opacity=".5"/></svg></span></div>
   <div class="screen" id="screen"></div>
@@ -628,7 +638,7 @@ body{display:block;padding:0;min-height:0;background:#fff;overflow:hidden}
 <div hidden><span id="exTitle"></span><span id="exText"></span><div id="geoCard"></div></div>
 <script>
 /* ============ 项目子文件夹 完整 Demo（按 Figma 现有页面还原） ============ */
-const STORE_KEY = 'tm-subfolder-demo-v8-wind';
+const STORE_KEY = 'tm-subfolder-demo-teams-v1';
 const H = 3600e3, D = 24 * H, MAX_DEPTH = 3;
 const IC = {
   back:'<path d="M15 5l-7 7 7 7"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
@@ -668,16 +678,19 @@ const TPL = {
   inspect:{name:'Turbine Inspection', steps:[{t:'Turbine No.',k:'text'},{t:'Blade photo',k:'photo'},{t:'Nacelle photo',k:'photo'}]},
   maint:{name:'Maintenance Report', steps:[{t:'Maintenance type',k:'text'},{t:'Before',k:'photo'},{t:'After',k:'photo'}]},
   install:{name:'Installation Checklist', steps:[{t:'Torque value (Nm)',k:'text'},{t:'Foundation',k:'photo'},{t:'Tower section',k:'photo'}]},
-  safety:{name:'Daily Safety Check', steps:[{t:'Crew on site',k:'text'},{t:'PPE check',k:'photo'},{t:'Hazards noted',k:'text'}]}
+  safety:{name:'Daily Safety Check', steps:[{t:'Crew on site',k:'text'},{t:'PPE check',k:'photo'},{t:'Hazards noted',k:'text'}]},
+  visit:{name:'Store Visit', steps:[{t:'Store manager',k:'text'},{t:'Shelf display',k:'photo'},{t:'Storefront',k:'photo'},{t:'Stock level',k:'text'}]},
+  audit:{name:'Promo Audit', steps:[{t:'Promo in place?',k:'text'},{t:'Promo display',k:'photo'}]},
+  daily:{name:'Daily Report', steps:[{t:'Work done',k:'text'},{t:'Site photo',k:'photo'}]}
 };
-const TPL_ICON = {inspect:'search', maint:'sliders', install:'grid', safety:'shield'};
+const TPL_ICON = {inspect:'search', maint:'sliders', install:'grid', safety:'shield', visit:'pin', audit:'grid', daily:'note'};
 const TAGS = ['blade','nacelle','tower','hub','gearbox','foundation','crane','bolt torque','cable','rotor','site overview','access road','substation','anemometer','ladder','PPE','yaw drive','generator'];
 const SAMPLE_FILES = [['turbine_layout.kmz','48 KB'],['maintenance_schedule.xlsx','95 KB'],['service_report_Q3.pdf','2.1 MB'],['blade_inspection.pdf','3.4 MB'],['torque_log.docx','310 KB'],['notes.txt','4 KB']];
 const SHARE_APPS = [['WhatsApp','#25D366'],['Telegram','#2AABEE'],['Zalo','#0068FF'],['LINE','#06C755'],['Messenger','#0084FF'],['Facebook','#1877F2'],['WA Business','#25D366'],['iMessage','#34C759'],['Email','#1A73E8'],['Copy link','#8E8E93'],['More','#C7C7CC']];
 const FARMS = [['f1','Cedar Ridge Wind Farm','Cedar Ridge, NE',[41.2031,-101.4210]],['f2','Prairie Creek Wind Farm','Prairie Creek, KS',[38.4410,-99.3302]],['f3','Blue Hill Wind Farm','Blue Hill, TX',[32.7120,-100.9104]],['f4','Red Mesa Wind Farm','Red Mesa, NM',[35.1806,-107.8833]]];
-function seed(){
+function seedWind(){
   const now = Date.now(); let seq = 1000; const nid = p => p + (seq++);
-  const db = { team:'Acme Wind Services', me:'u1',
+  const db = { team:'Acme Wind Services', tplKeys:['inspect','maint','install','safety'], tags:TAGS, nearby:['Cedar Ridge, NE','Prairie Creek, KS','Blue Hill, TX','Red Mesa, NM','O&M Building, Cedar Ridge','Substation Rd'], tryq:['blade','gearbox','Turbine 12','Maintenance','Cedar Ridge'], me:'u1',
     members:[{id:'u1',name:'Elliott Chen',ini:'EC',c:'#5B8DEF'},{id:'u2',name:'Mona Wang',ini:'MW',c:'#E58A5C'},{id:'u3',name:'David Lee',ini:'DL',c:'#4CAF7A'},{id:'u4',name:'Tom Reyes',ini:'TR',c:'#9C6ADE'},{id:'u5',name:'Priya Nair',ini:'PN',c:'#D65C8A'},{id:'u6',name:'Andrew Hall',ini:'AH',c:'#3BA7B5'}],
     projects:{}, folders:{}, items:[], gen:{}, autosave:{on:true, target:'f1'}, seq:0 };
   let hue = 12;
@@ -705,8 +718,42 @@ function seed(){
   db.seq = seq; return db;
 }
 let DB;
-function load(){ try { const s = localStorage.getItem(STORE_KEY); if (s){ DB = JSON.parse(s); return; } } catch(e){} DB = seed(); }
-function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); } catch(e){} }
+const RETAIL_TAGS = ['shelf display','storefront','promo stand','cooler','price tags','stockroom','end cap','checkout counter'];
+function seedVisits(){
+  const now = Date.now(); let seq = 5000; const nid = p => p + (seq++);
+  const db = { team:'Northline Distribution', tplKeys:['visit','audit'], tags:RETAIL_TAGS, nearby:['Downtown loop','Westside','Airport Rd','Central warehouse','Main St & 3rd','Harbor Blvd'], tryq:['shelf display','Sunrise Mart','cooler','Route B','promo'], me:'u1',
+    members:[{id:'u1',name:'Elliott Chen',ini:'EC',c:'#5B8DEF'},{id:'u2',name:'Rina Putri',ini:'RP',c:'#E58A5C'},{id:'u3',name:'Budi Santoso',ini:'BS',c:'#4CAF7A'},{id:'u4',name:'Maya Lim',ini:'ML',c:'#9C6ADE'},{id:'u5',name:'Carlos Diaz',ini:'CD',c:'#D65C8A'}],
+    projects:{}, folders:{}, items:[], gen:{}, autosave:{on:true, target:'r1'}, seq:0 };
+  let hue = 30;
+  const ph = (folder, n, ago, by, tags) => { for (let i = 0; i < n; i++){ hue = (hue + 53) % 360; db.items.push({id:nid('i'), type:'photo', folder, ts:now - ago - i*240e3, by, hue, tag:tags[i % tags.length]}); } };
+  const visit = (folder, ago, by, mgr, stock) => db.items.push({id:nid('i'), type:'checklist', folder, tpl:'visit', ts:now - ago - 900e3, by, values:[{text:mgr},{photos:[(hue+=41)%360]},{photos:[(hue+=41)%360]},{text:stock}]});
+  const ROUTES = [
+    ['r1','Route A · Downtown','Downtown loop',[37.7790,-122.4190],'u2',[['Sunrise Mart','120 Main St'],['Corner Fresh','215 Main St'],['Golden Grocery','48 3rd St'],['QuickStop #12','301 Market St'],['Daily Needs','77 Pine St'],['Lucky 7 Market','9 Bush St'],['Green Leaf Store','160 Kearny St'],['Main St Pharmacy','402 Main St']]],
+    ['r2','Route B · Westside','Westside',[37.7650,-122.4650],'u3',[['Westside Mini Mart','12 Ocean Ave'],['Family Mart #3','230 Judah St'],['Sunset Grocers','88 Irving St'],['Bayview Foods','415 Noriega St'],['Park Corner Shop','61 Lincoln Way'],['Fresh Point','190 Taraval St']]],
+    ['r3','Route C · Airport Rd','Airport Rd',[37.6300,-122.4100],'u4',[['Airport Plaza Market','1 Airport Rd'],['Gateway Convenience','55 Airport Rd'],['Terminal Snacks','210 Airport Rd'],['Runway Mart','340 Airport Rd'],['Skyline Grocery','12 Bayshore Blvd']]]];
+  const MGRS = ['Lena','Omar','Grace','Tom','Priya','Ken'];
+  ROUTES.forEach(([rid, name, addr, [lat, lng], rep, stores], ri) => {
+    db.projects[rid] = {id:rid, name, address:addr, lat, lng, updated:now - (ri+1)*3*H};
+    db.items.push({id:nid('i'), type:'doc', folder:rid, name:'route_plan_oct.xlsx', size:'95 KB', ts:now - 12*D, by:'u1'});
+    if (ri === 0) ph(rid, 2, 5*D, rep, ['checkout counter','price tags']);
+    stores.forEach(([sn, sa], si) => {
+      const sid = rid + 's' + (si+1), slat = lat + (si%3)*0.0012, slng = lng + Math.floor(si/3)*0.0015;
+      db.folders[sid] = {id:sid, name:sn, parent:rid, address:sa, lat:slat, lng:slng, updated:now - (si*5 + ri*7 + 2)*H};
+      [1, 8, 15].forEach((w, vi) => { if (vi === 2 && si % 3 === 2) return; const ago = (w + (si % 4)) * D + si*H; ph(sid, 2 + ((si+vi)%2), ago, rep, RETAIL_TAGS.slice((si+vi)%5)); visit(sid, ago, rep, MGRS[(si+ri)%6], ['Full','Low on chips','Restock drinks','OK'][(si+vi)%4]); });
+      if (si === 1) db.items.push({id:nid('i'), type:'checklist', folder:sid, tpl:'audit', ts:now - 3*D, by:rep, values:[{text:'Yes'},{photos:[(hue+=41)%360]}]});
+    });
+  });
+  db.seq = seq; return db;
+}
+function seedFresh(){
+  return { team:'My New Team', tplKeys:['daily','safety'], tags:['site overview','progress','materials','equipment'], nearby:['123 Main St','Tianfu Software Park','ABC Hospital','2949 Mall'], tryq:['site overview','progress'], me:'u1',
+    members:[{id:'u1',name:'Elliott Chen',ini:'EC',c:'#5B8DEF'}], projects:{}, folders:{}, items:[], gen:{}, autosave:{on:true, target:'NONE'}, seq:9000 };
+}
+const TEAM_SEEDS = {wind:seedWind, visits:seedVisits, fresh:seedFresh};
+let ALL;
+function seedAll(){ return {cur:'wind', order:['wind','visits','fresh'], teams:{wind:seedWind(), visits:seedVisits(), fresh:seedFresh()}}; }
+function load(){ try { const s = localStorage.getItem(STORE_KEY); if (s){ ALL = JSON.parse(s); } } catch(e){} if (!ALL || !ALL.teams) ALL = seedAll(); DB = ALL.teams[ALL.cur]; }
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(ALL)); } catch(e){} }
 const nid = p => p + (DB.seq++);
 
 /* ---------------- model helpers ---------------- */
@@ -777,13 +824,13 @@ function homeScreen(){
   const as = DB.autosave; const projs = Object.values(DB.projects).sort((a,b)=>b.updated-a.updated);
   const recent = DB.items.filter(i=>i.type==='photo').sort((a,b)=>b.ts-a.ts).slice(0,8); CTX.home = recent.map(p=>p.id);
   const mems = DB.members.slice(0,3);
-  return `<div class="nav"><button class="teamname" data-act="toast" data-msg="Switch team (not in this demo)">${esc(DB.team)} ${svg('updown','s')}</button><div class="r"><button data-act="toast" data-msg="Web portal (not in this demo)">${svg('monitor')}</button><button data-act="cameraOpenHome" aria-label="Back to camera">${svg('close')}</button></div></div>
+  return `<div class="nav"><button class="teamname" data-act="teamOpen">${esc(DB.team)} ${svg('updown','s')}</button><div class="r"><button data-act="toast" data-msg="Web portal (not in this demo)">${svg('monitor')}</button><button data-act="cameraOpenHome" aria-label="Back to camera">${svg('close')}</button></div></div>
   <div class="asbar" data-act="autosaveOpen">${svg('camPlus','blue')}<span class="ast">Auto save to <b>${esc(as.target && exists(as.target) ? destStr(as.target) : 'No project')}</b></span><span class="on">${as.on?'On':'Off'} ${svg('chevR','s gray')}</span></div>
   <div class="hsec"><div class="hh"><span data-act="toast" data-msg="Members (not in this demo)">${plural(DB.members.length,'Member')} ${svg('chevR','s')}</span><button data-act="toast" data-msg="Invite (not in this demo)" aria-label="Invite">${svg('userPlus')}</button></div>
-    <div class="mstrip">${mems.map((m,i)=>{ const p = DB.items.find(x=>x.type==='photo'&&x.by===m.id); return `<div class="mcard" style="background:${p?phColor(p.hue):'#B9CCD9'}"><span class="mav" style="background:${m.c}">${m.ini}</span><span class="mname">${esc(m.name)}<br>${p?ago(p.ts):''}</span></div>`; }).join('')}</div></div>
+    <div class="mstrip">${mems.length<3?'':''}${mems.map((m,i)=>{ const p = DB.items.find(x=>x.type==='photo'&&x.by===m.id); return `<div class="mcard" style="background:${p?phColor(p.hue):'#B9CCD9'}"><span class="mav" style="background:${m.c}">${m.ini}</span><span class="mname">${esc(m.name)}<br>${p?ago(p.ts):''}</span></div>`; }).join('')}${Array.from({length:Math.max(0,3-mems.length)},()=>`<div class="mcard invite" data-act="toast" data-msg="Invite (not in this demo)">${svg('userPlus','gray')}</div>`).join('')}</div></div>
   <div class="hsec"><div class="hh"><span data-act="go" data-v="projects">${plural(projs.length,'Project')} ${svg('chevR','s')}</span><button data-act="newProject" aria-label="Create project">${svg('plus')}</button></div>
-    ${projs.slice(0,3).map(p=>projRow(p,true)).join('')}</div>
-  <div class="hsec"><div class="hh"><span data-act="go" data-v="allPhotos">All Photos ${svg('chevR','s')}</span></div></div>
+    ${projs.length ? projs.slice(0,3).map(p=>projRow(p,true)).join('') : `<div class="hsub">Auto organize photos by project, location</div><div class="hcreate" data-act="newProject">${svg('folderPlus','blue')}</div>`}</div>
+  <div class="hsec"><div class="hh"><span data-act="go" data-v="allPhotos">All Photos ${svg('chevR','s')}</span></div>${recent.length?'':'<div class="hsub">Photos your team takes show up here automatically.</div>'}</div>
   <div class="hstrip">${recent.map(p=>`<div class="hph" data-act="photoTap" data-id="${p.id}" data-ctx="home" style="background:${phColor(p.hue)}"><span class="ptag">${esc(p.tag)}</span></div>`).join('')}</div><div class="pad"></div>`;
 }
 function projRow(p, home){ const arr = subtree(p.id); const nf = isCont(p.id) ? childCards(p.id).length : 0;
@@ -795,8 +842,8 @@ function projectsScreen(){
   ${list.map(p=>projRow(p,false)).join('')}
   <div class="didnt">Didn't find your project?</div><div class="prow" data-act="newProject"><div class="thumb createbox">${svg('plus','blue')}</div><div class="main"><div class="t" style="color:var(--blue);font-weight:600">Create</div></div></div><div class="pad"></div>`;
 }
-const NEARBY = ['Cedar Ridge, NE','Prairie Creek, KS','Blue Hill, TX','Red Mesa, NM','O&M Building, Cedar Ridge','Substation Rd'];
-function locBlock(v, kind){ return `<div class="row" data-act="locAsk">${svg('pin')}<div class="main"><div class="t">${v.addr?esc(v.addr):(v.mode==='new'||v.t==='newProject'?'Location':'Add Location')}</div></div>${svg('chevR','s gray')}</div>${!v.addr?`<div class="chips2">${NEARBY.map(a=>`<span class="lchip" data-act="pickAddr" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</div>`:''}<div class="hint pad16">Get reminded to select this ${kind} when nearby.</div>`; }
+const nearbyList = () => DB.nearby || [];
+function locBlock(v, kind){ return `<div class="row" data-act="locAsk">${svg('pin')}<div class="main"><div class="t">${v.addr?esc(v.addr):(v.mode==='new'||v.t==='newProject'?'Location':'Add Location')}</div></div>${svg('chevR','s gray')}</div>${!v.addr?`<div class="chips2">${nearbyList().map(a=>`<span class="lchip" data-act="pickAddr" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</div>`:''}<div class="hint pad16">Get reminded to select this ${kind} when nearby.</div>`; }
 function newProjectScreen(v){
   return `<div class="gray-bg">${nav(backBtn,'Create project','')}<div class="card"><div class="field"><div>Project name<span class="req">*</span></div><input id="fName" placeholder="Name your project" value="${esc(v.name||'')}" maxlength="60"></div><div class="hr"></div>${locBlock(v,'project')}</div></div>
   <div class="bottombar"><div class="bigbtn ${(v.name||'').trim()?'':'dis'}" data-act="createProject" id="doneBtn">Done</div></div>`;
@@ -912,7 +959,7 @@ function tplScreen(v){ // checklist data page (template within a folder)
   return h + '<div class="pad"></div>';
 }
 function clCreateScreen(v){
-  return `<div class="gray-bg">${nav(`<button data-act="back" aria-label="Close">${svg('close')}</button>`,'Create Checklist','')}<div class="bigtitle">Start with a template</div><div class="card">${Object.entries(TPL).map(([k,t],i)=>`<div class="tplrow ${i?'bt':''}" data-act="startExec" data-k="${k}">${svg(TPL_ICON[k])}<div class="main"><div class="t">${t.name}</div><div class="m">${plural(t.steps.length,'step')}</div></div></div>`).join('')}<div class="tplrow bt blue" data-act="toast" data-msg="Create from scratch (not in this demo)">${svg('plus','blue')}<div class="main"><div class="t" style="color:var(--blue)">Create from scratch</div></div></div></div></div>`;
+  return `<div class="gray-bg">${nav(`<button data-act="back" aria-label="Close">${svg('close')}</button>`,'Create Checklist','')}<div class="bigtitle">Start with a template</div><div class="card">${Object.entries(TPL).filter(([k])=>(DB.tplKeys||Object.keys(TPL)).includes(k)).map(([k,t],i)=>`<div class="tplrow ${i?'bt':''}" data-act="startExec" data-k="${k}">${svg(TPL_ICON[k])}<div class="main"><div class="t">${t.name}</div><div class="m">${plural(t.steps.length,'step')}</div></div></div>`).join('')}<div class="tplrow bt blue" data-act="toast" data-msg="Create from scratch (not in this demo)">${svg('plus','blue')}<div class="main"><div class="t" style="color:var(--blue)">Create from scratch</div></div></div></div></div>`;
 }
 function clExecScreen(v){
   const t = TPL[v.k]; const done = t.steps.every((s,i)=> s.k==='photo' ? (v.values[i].photos||[]).length : (v.values[i].text||'').trim());
@@ -936,7 +983,7 @@ function searchScreen(){
     if (docs.length) res += `<div class="sh">Docs</div>` + docs.map(d=>`<div class="docrow" data-act="openDoc" data-id="${d.id}"><div class="fico"><span style="background:${EXT_COLOR[docExt(d.name)]||'#6B7280'}">${docExt(d.name)}</span></div><div class="main"><div class="t">${esc(d.name)}</div><div class="m">${esc(destStr(d.folder))}</div></div></div>`).join('');
     if (phs.length) res += `<div class="sh">Photos</div><div class="acts" style="margin-top:4px"><div class="btn pri" data-act="searchShare">${svg('share','s white')}Share</div><div class="btn sec" data-act="searchDownload">Download ${svg('chevD','s')}</div></div>` + dayGroups(phs, 'search', p => nameOf(viewOfStore(p.folder)));
     if (!res) res = `<div class="empty">No results</div>`;
-  } else res = `<div class="tryrow">Try ${['blade','gearbox','Turbine 12','Maintenance','Cedar Ridge'].map(t=>`<span class="tryq" data-act="tryQ" data-q="${t}">${t}</span>`).join('')}</div><div class="hint pad16">Photos are matched by AI tags (the label on each photo) and by folder name.</div>`;
+  } else res = `<div class="tryrow">Try ${(DB.tryq||[]).map(t=>`<span class="tryq" data-act="tryQ" data-q="${t}">${t}</span>`).join('')}</div><div class="hint pad16">Photos are matched by AI tags (the label on each photo) and by folder name.</div>`;
   return `<div class="nav"><span></span><div class="r"><button data-act="toast" data-msg="Select (not in this demo)">${svg('select')}</button></div></div><div class="search big">${svg('search','s')}<input id="qSearch" placeholder="Search photos, folders, docs" value="${esc(S.q.search)}">${q?`<button data-act="clearQ" aria-label="Clear">${svg('close','s gray')}</button>`:''}</div>
   <div class="filters"><span>Time Range ${svg('chevD','s')}</span><span>Projects ${svg('chevD','s')}</span><span>Members ${svg('chevD','s')}</span><span>Type ${svg('chevD','s')}</span></div><div class="rescount">${q?plural(count,'Result'):''}</div><div id="sRes">${res}</div><div class="pad"></div>`;
 }
@@ -962,6 +1009,7 @@ function overlayHtml(){
   if (o.t === 'download') return sheet(head(o.pct<100?'Downloading…':'Download complete', o.pct>=100) + `<div class="prog"><i style="width:${o.pct}%"></i></div><div class="info-txt">${o.pct<100?`Saving ${plural(o.count,'photo')} to your device…`:`${plural(o.count,'photo')} saved to your device`}</div>${o.pct>=100?'<div class="btnrow"><div class="bigbtn" data-act="closeOv">Done</div></div>':'<div style="height:24px"></div>'}`);
   if (o.t === 'uploading') return sheet(head('Uploading…', false) + `<div class="prog"><i style="width:${o.pct}%"></i></div><div class="info-txt">${o.done} of ${o.count} uploaded to ${esc(destStr(o.target))}</div><div style="height:24px"></div>`);
   if (o.t === 'picker') return pickerHtml(o, still);
+  if (o.t === 'teams') return sheet(`<div class="sheet-h left"><span class="title">Switch team</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div>${ALL.order.map(k => { const t = ALL.teams[k]; const np = Object.keys(t.projects).length; return `<div class="teamrow ${k===ALL.cur?'on':''}" data-act="teamPick" data-id="${k}"><span class="tav" style="background:${({wind:'#2F6FD6',visits:'#E07A2E',fresh:'#6B7A90'})[k]}">${esc(t.team[0])}</span><div class="main"><div class="t">${esc(t.team)}</div><div class="m">${plural(t.members.length,'member')} · ${plural(np,'project')}</div></div>${k===ALL.cur?svg('check','blue'):''}</div>`; }).join('')}<div class="teamrow" data-act="toast" data-msg="Create team (not in this demo)"><span class="tav add">${svg('plus','blue')}</span><div class="main"><div class="t" style="color:var(--blue)">Create a new team</div></div></div><div style="height:12px"></div>`);
   if (o.t === 'photoInfo'){ const p = DB.items.find(i=>i.id===topV().id); const m = member(p.by); const vid = viewOfStore(p.folder);
     return sheet(`<div class="sheet-h"><span style="width:24px"></span><span class="title">Details</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div>
     <div class="drow" data-act="toast" data-msg="Member profile (not in this demo)"><span class="vav sm" style="background:${m.c}">${m.ini}</span><span class="dt">${esc(m.name)}</span>${svg('chevR','s gray')}</div>
@@ -995,7 +1043,8 @@ function treeHtml(o, still){
   return `<div class="dim" data-act="closeOv"></div><div class="sheet tall${still}"><div class="sheet-h left"><span class="title">Move to</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div><div class="search sm">${svg('search','s gray')}<input id="pkQ" placeholder="Search project" value="${esc(o.q||'')}"></div><div class="pk-body">${rows.join('') || '<div class="empty">No matching projects</div>'}</div><div class="bottombar rel"><div class="bigbtn ${ok?'':'dis'}" data-act="pkDone">Done</div></div></div>`;
 }
 const coordsOf = id => { if (!id || id === 'NONE') return null; const x = isGen(id) ? genParent(id) : id; const n = DB.projects[x] || DB.folders[x]; if (n && n.lat != null) return {lat:n.lat, lng:n.lng}; const par = parentOf(x); return par ? coordsOf(par) : null; };
-const startPos = id => coordsOf(id && id !== 'NONE' ? id : 'f1') || coordsOf('f1');
+const firstProj = () => { const p = Object.values(DB.projects)[0]; return p ? p.id : null; };
+const startPos = id => coordsOf(id && id !== 'NONE' ? id : firstProj()) || coordsOf(firstProj());
 const distM = (a, b) => { const R = 6371000, r = x => x * Math.PI / 180; const dl = r(b.lat - a.lat), dn = r(b.lng - a.lng); const h = Math.sin(dl/2)**2 + Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(h)); };
 const distStr = m => { const ft = m * 3.28084; return ft < 1000 ? Math.max(1, Math.round(ft)) + 'ft' : (m / 1609.34).toFixed(m < 16093 ? 1 : 0) + 'mi'; };
 function selectHtml(o, still){
@@ -1205,12 +1254,12 @@ function act(a, d){
     case 'cameraOpen': S.cam = {target: store(v.id), shots:0, banner:null, saved:{}, pos:startPos(store(v.id))}; push({t:'camera'}); break;
     case 'cameraOpenHome': { const t0 = DB.autosave.target && exists(DB.autosave.target) ? DB.autosave.target : 'NONE'; S.cam = {target:t0, shots:0, banner:null, saved:{}, pos:startPos(t0)}; push({t:'camera'}); break; }
     case 'camTarget': openOv({t:'picker', purpose:'camTarget', at: pkStart(S.cam.target), sel:S.cam.target}); keep = true; break;
-    case 'camGeo': { const c = S.cam; const pr = projOf(c.target); if (d.id === '__none'){ const b = coordsOf(pr === 'NONE' ? 'f1' : pr); c.pos = b ? {lat:b.lat + 0.05, lng:b.lng + 0.05} : null; } else c.pos = coordsOf(d.id);
+    case 'camGeo': { const c = S.cam; const pr = projOf(c.target); if (d.id === '__none'){ const b = coordsOf(pr === 'NONE' ? firstProj() : pr); c.pos = b ? {lat:b.lat + 0.05, lng:b.lng + 0.05} : null; } else c.pos = coordsOf(d.id);
       if (d.id === '__none'){ c.banner = pr === 'NONE' ? 'No folder location matched' : `No folder location matched — saving to "${esc(destStr(pr))}"`; if (pr !== 'NONE') c.target = pr; }
       else if (isProj(d.id)){ c.target = d.id; c.banner = `At the project location — saving to "${esc(destStr(d.id))}"`; }
       else { c.target = d.id; c.banner = `You're at ${esc(addrOf(d.id))} — switched to "${esc(destStr(d.id))}"`; } keep = true; break; }
     case 'shoot': { const c = S.cam; if (c.target === 'NONE'){ toast('Saved to your phone only (No project)'); c.shots++; c.last = (c.shots*53+200)%360; keep = true; break; }
-      const hue = (c.shots * 53 + 200) % 360; const id = nid('i'); DB.items.push({id, type:'photo', folder:c.target, ts:Date.now(), by:DB.me, hue, tag:TAGS[(c.shots*7+3)%TAGS.length]}); touch(c.target); save(); c.shots++; c.last = hue; c.saved[c.target] = (c.saved[c.target]||0) + 1; c.lastTarget = c.target; c.banner = null; keep = true; break; }
+      const hue = (c.shots * 53 + 200) % 360; const id = nid('i'); DB.items.push({id, type:'photo', folder:c.target, ts:Date.now(), by:DB.me, hue, tag:(DB.tags||TAGS)[(c.shots*7+3)%(DB.tags||TAGS).length]}); touch(c.target); save(); c.shots++; c.last = hue; c.saved[c.target] = (c.saved[c.target]||0) + 1; c.lastTarget = c.target; c.banner = null; keep = true; break; }
     case 'camHome': { const c = S.cam; const n = c ? Object.values(c.saved||{}).reduce((x,y)=>x+y,0) : 0; S.cam = null; S.tab = 'library'; S.stacks.library = [{t:'home'}]; if (n) toast(`Saved ${plural(n,'photo')}`); break; }
     case 'camClose': { const c = S.cam; pop(); const keys = Object.keys(c.saved||{}); if (keys.length){ gotoNode(viewOfStore(c.lastTarget)); toast(keys.length === 1 ? `Saved ${plural(c.saved[keys[0]],'photo')} to "${destStr(keys[0])}"` : `Saved ${plural(keys.reduce((s,k)=>s+c.saved[k],0),'photo')}: ` + keys.map(k=>`${c.saved[k]} → ${nameOf(viewOfStore(k))}`).join(', ')); } S.cam = null; break; }
     /* upload */
@@ -1219,7 +1268,7 @@ function act(a, d){
     case 'upAll': { const u = S.up; if (u.sel.size === u.album.length) u.sel.clear(); else u.album.forEach((_,i)=>u.sel.add(i)); keep = true; break; }
     case 'upTarget': openOv({t:'picker', purpose:'uploadTarget', at:pkStart(S.up.target), sel:S.up.target}); keep = true; break;
     case 'doUpload': { const u = S.up; if (!u.sel.size){ toast('Select photos first'); return; } const list = [...u.sel]; openOv({t:'uploading', count:list.length, done:0, pct:0, target:u.target}); render(true);
-      let k = 0; const tick = () => { k++; const i = list[k-1]; DB.items.push({id:nid('i'), type:'photo', folder:u.target, ts:Date.now(), by:DB.me, hue:u.album[i], tag:TAGS[(i*5)%TAGS.length]}); S.ov.done = k; S.ov.pct = Math.round(k/list.length*100); render(true);
+      let k = 0; const tick = () => { k++; const i = list[k-1]; DB.items.push({id:nid('i'), type:'photo', folder:u.target, ts:Date.now(), by:DB.me, hue:u.album[i], tag:(DB.tags||TAGS)[(i*5)%(DB.tags||TAGS).length]}); S.ov.done = k; S.ov.pct = Math.round(k/list.length*100); render(true);
         if (k < list.length) setTimeout(tick, 200); else { touch(u.target); save(); setTimeout(()=>{ S.ov = null; pop(); gotoNode(viewOfStore(u.target)); render(); toast(`Uploaded ${plural(list.length,'photo')} to "${destStr(u.target)}"`); }, 300); } };
       setTimeout(tick, 250); return; }
     /* autosave */
@@ -1256,7 +1305,9 @@ function act(a, d){
     case 'pkDone': finishPick(S.ov, S.ov.sel); return;
     /* reset */
     case 'resetAsk': openOv({t:'confirm', title:'Reset demo data?', text:'All changes will be cleared and the 4 sample projects restored.', ok:'Reset', red:true, onOk:{act:'reset', arg:{}}}); keep = true; break;
-    case 'reset': try { localStorage.removeItem(STORE_KEY); } catch(e){} DB = seed(); save(); freshUI(); toast('Demo data reset'); break;
+    case 'reset': try { localStorage.removeItem(STORE_KEY); } catch(e){} ALL = seedAll(); DB = ALL.teams[ALL.cur]; save(); freshUI(); toast('Demo data reset'); break;
+    case 'teamOpen': openOv({t:'teams'}); keep = true; break;
+    case 'teamPick': { S.ov = null; if (d.id !== ALL.cur){ ALL.cur = d.id; DB = ALL.teams[d.id]; save(); freshUI(); toast(`Switched to ${DB.team}`); } break; }
   }
   render(keep);
 }
