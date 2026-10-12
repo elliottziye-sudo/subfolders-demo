@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Subfolders">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Subfolders Demo</title>
+
+<style>
+
+:root{--blue:#0070F4;--lblue:#E6F0FF;--gray:#999;--line:#EEE;--yellow:#F0CF6D;--txt:#000;--sub:#5B6A91}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#ECECEC;color:#111;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;gap:40px;padding:32px 24px}
+button{font:inherit;border:none;background:none;cursor:pointer;color:inherit}
+input{font:inherit}
+svg{display:block}
+/* phone */
+.phone{width:395px;height:832px;border-radius:54px;background:#111;padding:10px;flex:none;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.device{position:relative;width:375px;height:812px;border-radius:44px;overflow:hidden;background:#fff}
+.status{position:absolute;top:0;left:0;right:0;height:44px;display:flex;justify-content:space-between;align-items:center;padding:0 26px 0 32px;font-weight:600;font-size:15px;z-index:5;background:#fff}
+.status.dark{background:#000;color:#fff}
+.status .icons{display:flex;gap:6px;align-items:center}
+.screen{position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.homebar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:#000;z-index:40}
+.homebar.light{background:#fff}
+/* nav */
+.nav{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;background:#fff;z-index:3}
+.nav .r{display:flex;gap:18px;align-items:center}
+.nav .title{position:absolute;left:50%;transform:translateX(-50%);font-weight:600;font-size:17px;white-space:nowrap}
+.ic{width:24px;height:24px;stroke:#111;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.s{width:16px;height:16px}
+.ic.blue{stroke:var(--blue)}
+.ic.gray{stroke:#999}
+.ic.white{stroke:#fff}
+/* header */
+.hdr{padding:8px 16px 0;display:flex;flex-direction:column;gap:8px}
+.crumb{display:flex;align-items:center;gap:2px;color:var(--sub);font-size:13px;cursor:pointer;width:max-content}
+.crumb .ic{stroke:var(--sub);width:14px;height:14px}
+.titlebox{display:flex;gap:12px;align-items:center}
+.picon{width:50px;height:50px;border-radius:5px;background:var(--yellow);display:flex;align-items:center;justify-content:center;flex:none}
+.picon .ic{stroke:#fff;fill:#fff;width:26px;height:26px}
+.tname{font-size:18px;font-weight:600}
+.tsub{font-size:14px;color:var(--gray);margin-top:4px}
+/* tabs */
+.tabs{display:flex;margin:20px 16px 0;border-bottom:1px solid var(--line)}
+.tab{flex:1;text-align:center;padding:12px 0 10px;font-size:16px;color:var(--gray);border-bottom:2px solid transparent;cursor:pointer}
+.tab.on{color:#000;font-weight:600;border-bottom-color:#000}
+/* folders */
+.fsec{margin-top:20px}
+.fhead{display:flex;justify-content:space-between;align-items:center;padding:0 16px}
+.fcount{display:flex;align-items:center;gap:2px;font-weight:600;font-size:15px;cursor:pointer}
+.link{color:var(--blue);font-size:14px;display:flex;align-items:center;gap:2px;cursor:pointer}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:12px 16px 2px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.fcard{width:120px;flex:none;cursor:pointer}
+.cover{width:120px;height:120px;border-radius:8px;background:#F2F2F2 center/cover no-repeat;position:relative;display:flex;align-items:center;justify-content:center}
+.cover .badge{position:absolute;left:6px;top:6px;background:rgba(255,255,255,.92);border-radius:6px;padding:4px}
+.cover .tagj{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:500;border-radius:4px;padding:2px 6px}
+.fname{font-size:13px;font-weight:500;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fmeta{font-size:11px;color:var(--gray);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-new{margin:20px 16px 0;display:inline-flex;align-items:center;gap:4px;border:1px dashed #BFD7FF;border-radius:16px;padding:6px 12px 6px 9px;color:var(--blue);font-size:14px;cursor:pointer}
+/* actions */
+.acts{display:flex;align-items:center;gap:8px;padding:0 16px;margin-top:20px}
+.btn{display:flex;align-items:center;gap:4px;border-radius:8px;padding:9px 12px;font-size:16px;cursor:pointer}
+.btn.pri{background:var(--blue);color:#fff}
+.btn.sec{background:var(--lblue)}
+.scope{margin-left:auto;display:flex;align-items:center;gap:2px;background:#F5F5F5;border-radius:16px;padding:7px 8px 7px 12px;font-size:14px;color:#333;cursor:pointer}
+.scope.on{background:var(--lblue);color:var(--blue)}
+.scope.on .ic{stroke:var(--blue)}
+/* photos */
+.day{margin-top:20px}
+.dayh{display:flex;justify-content:space-between;align-items:center;padding:0 16px 12px;font-size:16px;font-weight:500}
+.ring{width:20px;height:20px;border-radius:50%;border:1.5px solid #C4C4C4}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.ph{aspect-ratio:1;background:#ddd center/cover no-repeat;position:relative;cursor:pointer}
+.ph .src{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:500;border-radius:4px;padding:2px 6px 2px 4px;display:flex;align-items:center;gap:3px}
+.ph .src .ic{width:12px;height:12px;stroke:#fff}
+.ph .sel{position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.15)}
+.ph.picked .sel{background:var(--blue);border-color:var(--blue);display:flex;align-items:center;justify-content:center}
+.ph.picked::after{content:"";position:absolute;inset:0;border:3px solid var(--blue)}
+.ph.new{animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.phead{display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-top:20px;font-size:14px;color:#666}
+.phead+.day{margin-top:12px}
+.picklist{margin:8px 16px 0;max-height:220px;overflow-y:auto;border:1px solid #EEE;border-radius:12px}
+.pick{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:15px;cursor:pointer}
+.pick+.pick{border-top:1px solid #F2F2F2}
+.pick .n{color:#999;font-size:13px}
+.cb{width:20px;height:20px;border-radius:5px;border:1.5px solid #C4C4C4;display:flex;align-items:center;justify-content:center;flex:none}
+.cb.on{background:var(--blue);border-color:var(--blue)}
+.empty{padding:48px 32px;text-align:center;color:var(--gray);font-size:14px;line-height:1.6}
+.pad{height:120px}
+/* fab */
+.fab{position:absolute;right:16px;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:6}
+.fab.up{bottom:108px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.14)}
+.fab.cam{bottom:34px;background:var(--blue);box-shadow:0 4px 12px rgba(0,70,160,.3)}
+/* list rows */
+.row{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer}
+.row .th{width:52px;height:52px;border-radius:8px;background:#F2F2F2 center/cover no-repeat;flex:none;display:flex;align-items:center;justify-content:center}
+.row .main{flex:1;min-width:0}
+.row .t{font-size:16px;display:flex;align-items:center;gap:6px}
+.row .m{font-size:13px;color:var(--gray);margin-top:3px}
+.tagg{font-size:11px;font-weight:500;background:#EDF7E6;color:#3B7A1A;border-radius:4px;padding:1px 5px}
+.search{margin:4px 16px 8px;background:#F5F5F5;border-radius:8px;display:flex;align-items:center;gap:8px;padding:9px 12px}
+.search input{border:none;background:none;outline:none;flex:1;font-size:15px}
+.sortbar{display:flex;justify-content:space-between;align-items:center;padding:6px 16px;font-size:13px;color:var(--gray)}
+.sortbar button{color:#333;display:flex;align-items:center;gap:2px;font-size:13px}
+/* form */
+.gray-bg{background:#F5F5F5;min-height:100%}
+.card{background:#fff;border-radius:12px;margin:16px}
+.field{padding:16px;display:flex;flex-direction:column;gap:10px}
+.field input{background:#F5F5F5;border:none;border-radius:8px;padding:11px 12px;font-size:16px;outline:none}
+.field input:focus{box-shadow:0 0 0 2px var(--blue) inset}
+.note{font-size:13px;color:var(--gray);padding:0 20px;line-height:1.5}
+.bottombar{position:absolute;left:0;right:0;bottom:0;background:#fff;padding:12px 16px 34px;display:flex;gap:12px;z-index:20;border-top:1px solid var(--line)}
+.bigbtn{flex:1;background:var(--blue);color:#fff;border-radius:8px;padding:13px;font-size:16px;font-weight:600;text-align:center;cursor:pointer}
+.bigbtn.dis{background:#9FC5F8;cursor:not-allowed}
+.bigbtn.light{flex:none;background:var(--lblue);color:var(--blue);font-weight:400;display:flex;align-items:center;gap:4px;padding:13px 14px}
+/* overlays */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:30}
+.dim.light{background:rgba(0,0,0,.12)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;z-index:31;padding-bottom:34px;animation:up .22s ease}
+.sheet.still,.menu.still{animation:none}
+.sheet.tall{top:54px;display:flex;flex-direction:column;padding-bottom:0}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.grab{width:36px;height:5px;border-radius:3px;background:#D9D9D9;margin:8px auto 0}
+.sheet-h{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative}
+.sheet-h .title{position:absolute;left:50%;transform:translateX(-50%);font-weight:600;font-size:17px;white-space:nowrap}
+.opts{margin:0 16px;background:#F7F7F7;border-radius:12px}
+.opt{display:flex;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
+.opt+.opt{border-top:1px solid #EBEBEB}
+.radio{width:22px;height:22px;border-radius:50%;border:1.5px solid #C4C4C4;flex:none;background:#fff}
+.radio.on{border:none;background:var(--blue);box-shadow:inset 0 0 0 7px var(--blue),inset 0 0 0 11px #fff}
+.opt .t{font-size:16px}.opt .m{font-size:13px;color:var(--gray);margin-top:3px;line-height:1.4}
+.pk-body{flex:1;overflow-y:auto}
+.pk-label{font-size:13px;color:var(--gray);padding:12px 16px 4px}
+.pk-row{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer}
+.pk-row.cur{opacity:.4;cursor:default}
+.pk-row.hl{background:#F2F7FF}
+.pk-row .t{font-size:16px}.pk-row .m{font-size:13px;color:var(--gray);margin-top:2px}
+.pk-row .main{flex:1;min-width:0}
+.curtag{font-size:12px;color:#848484;background:#F0F0F0;border-radius:4px;padding:2px 6px}
+.sep{height:8px;background:#F5F5F5}
+.menu{position:absolute;left:16px;top:120px;width:250px;background:#fff;border-radius:12px;padding:6px 0;z-index:31;box-shadow:0 8px 24px rgba(0,0,0,.16);animation:up .18s ease}
+.menu .mi{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:16px;cursor:pointer}
+.menu .mi:hover{background:#F7F7F7}
+.menu .mi.cur{font-weight:600}
+.selbar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px 34px;display:flex;gap:10px;z-index:20}
+.selbar .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:#333;cursor:pointer}
+.selbar .b.dis{opacity:.35;cursor:default}
+.toast{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;font-size:14px;border-radius:10px;padding:10px 14px;z-index:50;max-width:320px;text-align:center;line-height:1.4;animation:fade .2s ease}
+@keyframes fade{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+/* camera */
+.camview{position:absolute;inset:0;background:#000;color:#fff;z-index:25}
+.camview .vf{position:absolute;left:0;right:0;top:96px;height:560px;background:center/cover no-repeat}
+.camview .dest{position:absolute;top:52px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border-radius:18px;padding:7px 12px 7px 10px;font-size:14px;white-space:nowrap;cursor:pointer;max-width:320px}
+.camview .dest b{font-weight:600}
+.camview .x{position:absolute;top:52px;left:16px;cursor:pointer}
+.camview .shutter{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);width:72px;height:72px;border-radius:50%;border:5px solid #fff;background:#fff;box-shadow:inset 0 0 0 3px #000;cursor:pointer}
+.camview .hint{position:absolute;bottom:140px;left:0;right:0;text-align:center;font-size:13px;color:rgba(255,255,255,.75)}
+/* doc list */
+.doc{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #F3F3F3}
+.doc .f{width:44px;height:44px;border:1px solid #E5E5E5;border-radius:6px;position:relative}
+.doc .f span{position:absolute;right:3px;top:3px;font-size:8px;font-weight:700;color:#fff;background:#E5484D;border-radius:2px;padding:1px 3px}
+.doc .t{font-size:16px}.doc .m{font-size:13px;color:var(--gray);margin-top:3px}
+/* side panel */
+.panel{width:400px;flex:none;display:flex;flex-direction:column;gap:16px;position:sticky;top:32px}
+.pcard{background:#fff;border-radius:16px;padding:18px 20px}
+.pcard h1{font-size:20px;font-weight:700}
+.pcard h2{font-size:15px;font-weight:700;margin-bottom:10px}
+.pcard p,.pcard li{font-size:14px;line-height:1.65;color:#333}
+.pcard ul,.pcard ol{padding-left:18px}
+.scen{display:flex;flex-direction:column;gap:8px}
+.scen button{text-align:left;padding:10px 12px;border-radius:10px;background:#F5F7FA;font-size:14px;line-height:1.4}
+.scen button:hover{background:#E9F1FF}
+.scen button.on{background:var(--blue);color:#fff}
+.scen button small{display:block;opacity:.75;font-size:12px;margin-top:2px}
+.explain{background:#FFF8E1;border-radius:16px;padding:18px 20px}
+.explain h2{font-size:15px;font-weight:700;color:#5C4A00;margin-bottom:8px}
+.explain p{font-size:14px;line-height:1.7;color:#5C4A00}
+.steps li.done{color:#9AA0A6;text-decoration:line-through}
+.reset{font-size:13px;color:var(--blue);margin-top:10px}
+.tagline{font-size:13px;color:#666;margin-top:6px;line-height:1.6}
+.pulse{animation:pulse 1.4s ease-in-out infinite;border-radius:10px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,112,244,.55)}50%{box-shadow:0 0 0 6px rgba(0,112,244,0)}}
+
+/* ================= demo5 · 按 Figma 现有页面还原 ================= */
+:root{--blue:#0070F4;--lblue:#E6F0FF;--bg2:#F2F4F7;--gray:#8A8A8E;--sub:#5B6A91}
+body{flex-wrap:wrap}
+@media (max-width:900px){.panel{position:static}}
+.screen.withtabs{bottom:83px}
+.screen.dark{background:#000}
+.screen.cam{background:#F4F5F7}
+.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blue{color:var(--blue)}
+.txtbtn{color:var(--blue);font-size:16px}
+.req{color:#E5484D;margin-left:1px}.optl{color:#999;font-size:13px;font-weight:400}
+.hint{font-size:12px;color:#999;line-height:1.5}.pad16{padding:0 16px 14px}
+.hr{height:1px;background:#EEE;margin:0 16px}
+.row.static{cursor:default;padding:14px 16px}
+.row .t{font-size:16px}.row .m{font-size:13px;color:#999;margin-top:2px}
+.inline{border:none;outline:none;background:none;font-size:15px;width:100%;margin-top:4px;color:#333;padding:0}
+.convnote{margin:0 16px 12px;padding:10px 12px;border-radius:10px;background:#FFF8E1;color:#5C4A00;font-size:13px;line-height:1.5}
+.nav .r{gap:20px}
+
+/* ---- home (userhome2) ---- */
+.teamname{display:flex;align-items:center;gap:6px;font-size:22px;font-weight:700}
+.teamname .ic{width:18px;height:18px}
+.asbar{margin:6px 16px 0;background:#EBF3FE;border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-size:15px;cursor:pointer}
+.asbar .ast{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#222}
+.asbar .ast b{font-weight:600}
+.asbar .on{color:#888;display:flex;align-items:center;gap:4px;flex:none;font-size:15px}
+.hsec{margin-top:24px}
+.hh{display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:18px;font-weight:600}
+.hh>span{display:flex;align-items:center;gap:2px;cursor:pointer}
+.hh .ic.s{width:18px;height:18px}
+.mstrip{display:flex;gap:10px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none}
+.mcard{width:100px;height:160px;flex:none;border-radius:2px;position:relative;overflow:hidden}
+.mcard .mav{position:absolute;left:6px;top:6px;width:34px;height:34px;border-radius:50%;border:2px solid #fff;color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.mcard .mname{position:absolute;left:8px;bottom:8px;right:6px;color:#fff;font-size:13px;line-height:1.3;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+.prow{display:flex;align-items:center;gap:14px;padding:6px 16px;cursor:pointer}
+.prow .thumb{width:70px;height:70px;border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center}
+.prow.big .thumb{width:100px;height:100px;border-radius:0}
+.prow.sm .thumb{width:52px;height:52px}
+.prow .main{flex:1;min-width:0}
+.prow .t{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .m{font-size:14px;color:#999;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .m.blue{color:var(--sub);display:flex;align-items:center;gap:2px;font-size:12px}
+.prow .picons{margin-top:6px}
+.thumb.ph-empty{background:#EEF1F6}
+.thumb.createbox{background:#EBF3FE}
+.didnt{font-size:16px;color:#888;padding:28px 16px 12px}
+.hstrip{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none}
+.hph{width:100px;height:100px;flex:none;position:relative;cursor:pointer}
+.ptag,.hph .ptag{position:absolute;left:6px;top:5px;font-size:10px;font-weight:500;color:rgba(255,255,255,.95);text-shadow:0 1px 2px rgba(0,0,0,.25);pointer-events:none}
+.fab{width:64px;height:64px}
+.fab.cam{bottom:34px}
+.fab.cam.home{bottom:100px}
+.fab .ic.big{width:30px;height:30px}
+.fab.up{bottom:112px}
+
+/* ---- search bar (Projects / Search) ---- */
+.search{margin:8px 16px 16px;background:#F2F2F4;border-radius:8px;padding:10px 12px}
+.search input{font-size:16px}
+.search.big{margin-top:4px}
+
+/* ---- project / folder page (docs, cltab) ---- */
+.hdr{padding:10px 16px 0}
+.picon{width:50px;height:50px;border-radius:5px;background:#F5C85B}
+.picon.gen{background:var(--blue)}
+.picon.green{background:#4CC36A}
+.picon .ic{width:26px;height:26px}
+.tname{font-size:17px;font-weight:600;line-height:1.3}
+.tname.big{font-size:22px;font-weight:700;display:flex;align-items:center;gap:6px}
+.tsub{font-size:13px;color:#999;margin-top:3px}
+.tsub .ic{display:inline-block;vertical-align:-3px;stroke:#999}
+.defchip{display:inline-block;font-size:11px;font-weight:600;color:var(--blue);background:var(--lblue);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+.gnote{margin:12px 16px 0;padding:10px 12px;border-radius:8px;background:#F2F7FF;color:#33507A;font-size:13px;line-height:1.5}
+.chip-new{margin:14px 16px 0}
+.tabs{margin:14px 0 0;padding:0 16px;border-bottom:1px solid #EEE}
+.tab{font-size:16px;color:#888;padding:12px 0 11px}
+.tab.on{color:#000;font-weight:600;border-bottom:2px solid #000}
+.acts{margin-top:16px}
+.btn{font-size:15px;padding:8px 12px;border-radius:6px}
+.btn.sec{background:#EBF3FE;color:#111}
+/* folder grid (new) */
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px;padding:12px 16px 0}
+.gcard{cursor:pointer;min-width:0}
+.gcard .gc{height:104px;border-radius:6px;background:#F2F2F2;position:relative;display:flex;align-items:center;justify-content:center}
+.gcard .gc .badge{position:absolute;left:6px;top:6px;background:rgba(255,255,255,.92);border-radius:5px;padding:4px}
+.gcard .gc .def{position:absolute;right:6px;top:6px;background:var(--blue);color:#fff;font-size:10px;font-weight:600;border-radius:4px;padding:2px 6px}
+.gcard .gc .nest{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.45);color:#fff;font-size:11px;border-radius:5px;padding:2px 6px 2px 4px;display:flex;align-items:center;gap:3px}
+.gcard .gn{font-size:15px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcard .ga{font-size:11px;color:var(--sub);margin-top:2px;display:flex;align-items:center;gap:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcard .ga .ic{width:11px;height:11px;stroke:var(--sub);flex:none}
+.gcard .gm{font-size:12px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcard.gen .gc{background-color:#EEF4FF}
+/* photos */
+.day{margin-top:18px}
+.dayh{font-size:16px;font-weight:500;padding:0 16px 10px}
+.ring{cursor:pointer;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border:1.5px solid #9A9A9A}
+.ring.on{background:var(--blue);border-color:var(--blue)}
+.grid{gap:2px}
+.ph .sel{right:6px;top:6px;left:auto}
+/* checklists tab */
+.clrow{display:flex;align-items:center;gap:16px;padding:8px 16px;cursor:pointer}
+.clthumb{width:100px;height:100px;flex:none;position:relative;display:flex;align-items:center;justify-content:center}
+.clthumb .ic{width:34px;height:34px}
+.clthumb span{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-size:10px;font-weight:600;letter-spacing:1px;color:#fff}
+.clrow .main{flex:1;min-width:0}.clrow .t{font-size:17px}.clrow .m{font-size:14px;color:#888;margin-top:6px}
+.clrow:first-of-type{margin-top:12px}
+/* docs tab */
+.docrow{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid #F0F0F0;cursor:pointer}
+.fico{width:34px;height:40px;border:1.5px solid #CFCFD4;border-radius:3px;position:relative;flex:none;background:#fff}
+.fico::after{content:"";position:absolute;right:-1.5px;top:-1.5px;width:10px;height:10px;background:#fff;border-left:1.5px solid #CFCFD4;border-bottom:1.5px solid #CFCFD4;border-radius:0 0 0 2px}
+.fico span{position:absolute;left:-5px;bottom:8px;font-size:8px;font-weight:700;color:#fff;border-radius:2px;padding:1px 3px;letter-spacing:.2px}
+.docrow .main{flex:1;min-width:0}.docrow .t{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.docrow .m{font-size:13px;color:#999;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* folders list */
+.sortbar{padding:2px 16px 10px}
+
+/* ---- create project / folder (form) ---- */
+.gray-bg{background:#F2F2F7;min-height:100%}
+.gray-bg .nav{background:#F2F2F7}
+.card{border-radius:10px}
+.field input{background:#F2F2F7}
+.bigbtn{border-radius:8px;font-weight:500;font-size:17px}
+.bigbtn.dis{background:#9CC3F5}
+.bottombar{border-top:none;background:#fff}
+.bottombar.col{flex-direction:column;gap:10px}
+.destrow{display:flex;align-items:center;gap:8px;font-size:14px;background:#F2F2F7;border-radius:8px;padding:11px 12px;cursor:pointer}
+.destrow span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- photo detail ---- */
+.viewer{min-height:100%;background:#000;color:#fff;display:flex;flex-direction:column}
+.vtop{height:56px;display:flex;align-items:center;gap:10px;padding:0 16px}
+.vav{width:36px;height:36px;border-radius:50%;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none;border:1.5px solid rgba(255,255,255,.7)}
+.vwho{flex:1;min-width:0;font-size:16px;line-height:1.25}.vwho .vt{font-size:13px;color:#BBB}
+.vimg{position:relative;width:100%;height:440px;margin-top:20px;display:flex;align-items:center;justify-content:center}
+.vtag{font-size:16px;color:rgba(255,255,255,.95);text-shadow:0 1px 3px rgba(0,0,0,.3)}
+.wm{position:absolute;left:10px;bottom:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);display:grid;grid-template-columns:auto auto;column-gap:8px;align-items:center}
+.wmt{font-size:38px;font-weight:600;letter-spacing:-1px;line-height:1;font-family:"DIN Condensed","Arial Narrow",sans-serif}
+.wmt small{font-size:12px;font-weight:500;vertical-align:top;margin-left:3px;letter-spacing:0}
+.wmd{font-size:12px;line-height:1.5;border-left:2px solid #F5C85B;padding-left:7px}
+.wma{grid-column:1/3;font-size:12px;margin-top:6px}
+.vnav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.vnav.l{left:8px}.vnav.r{right:8px}
+.vloc{margin:14px auto 0;display:inline-flex;align-items:center;gap:4px;font-size:13px;background:rgba(255,255,255,.14);border-radius:16px;padding:6px 10px;cursor:pointer;align-self:center;max-width:330px}
+.vcount{text-align:center;font-size:12px;color:#888;margin-top:8px}
+.vbar{margin-top:auto;display:flex;padding:14px 8px 40px}
+.vbar .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+
+/* ---- camera ---- */
+.camview{position:relative;inset:auto;min-height:100%;display:flex;flex-direction:column;background:#F4F5F7;color:#111;z-index:auto}
+.camtop{height:50px;background:#2A2D33;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.camtop .vc{display:flex;align-items:center;gap:4px;border:1.5px solid rgba(255,255,255,.75);border-radius:14px;padding:3px 10px 3px 7px;font-size:12px;color:#fff}
+.camview .vf{position:relative;top:auto;height:452px;flex:none;display:block}
+.zoom{position:absolute;right:12px;top:150px;display:flex;flex-direction:column;gap:10px}
+.zoom span{width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center}
+.zoom span.on{width:34px;height:34px;border:1.5px solid #fff;margin-left:-3px}
+.demo-geo{position:absolute;left:10px;right:10px;top:10px;border:1.5px dashed #FFD54F;background:rgba(0,0,0,.45);border-radius:10px;padding:8px 10px}
+.demo-geo .lt{font-size:11px;color:#FFD54F;margin-bottom:6px;font-weight:600}
+.demo-geo .chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:3px;background:rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:4px 8px 4px 6px;font-size:12px;cursor:pointer}
+.chip .ic{width:12px;height:12px;stroke:#fff}
+.geo{position:absolute;left:16px;right:16px;top:118px;background:rgba(0,112,244,.92);color:#fff;font-size:13px;line-height:1.4;border-radius:10px;padding:9px 12px}
+.cambar{display:flex;align-items:stretch;height:42px;background:#E4E7EC}
+.projsel{flex:1;min-width:0;display:flex;align-items:center;gap:6px;padding:0 12px;font-size:14px;color:#333;cursor:pointer}
+.projsel span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.projsel .ic{stroke:#666}
+.teampill{flex:none;display:flex;align-items:center;gap:4px;padding:0 12px;background:#D6E6FB;color:#1F5FBF;font-size:14px;font-weight:500;cursor:pointer}
+.teampill i{font-style:normal;background:var(--blue);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;display:flex;align-items:center;justify-content:center}
+.camctl{display:flex;align-items:center;justify-content:space-between;padding:18px 34px 6px}
+.cside{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer;width:62px}
+.cside .prev{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.cside .prev.empty{background:#E9ECF0;border-color:#E9ECF0;box-shadow:none}
+.shutter2{width:74px;height:74px;border-radius:50%;border:4px solid #1A1A1A;cursor:pointer;background:#fff}
+.shutter2:active{background:#DDD}
+.modes{display:flex;justify-content:center;gap:16px;font-size:14px;font-weight:500;color:#999;letter-spacing:.5px;padding:10px 0 0;white-space:nowrap}
+.modes .on{color:#111;font-weight:700;position:relative}
+.modes .on::after{content:"";position:absolute;left:50%;bottom:-8px;width:4px;height:4px;border-radius:50%;background:#111;transform:translateX(-50%)}
+
+/* ---- checklist data page (Activity / Sheet) ---- */
+.filters{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;scrollbar-width:none}
+.filters span{flex:none;display:flex;align-items:center;gap:4px;background:#EBF3FE;border-radius:6px;padding:7px 10px;font-size:15px;color:#222}
+.act{padding:16px 16px 0}
+.acth{display:flex;align-items:center;gap:10px}
+.acth .vav{border:none;width:36px;height:36px}
+.acth .an{font-size:16px;font-weight:600}.acth .am{font-size:13px;color:#888;margin-top:2px}
+.actcard{margin:10px 0 0 46px;border:1px solid #E5E5EA;border-radius:8px;padding:4px 14px}
+.astep{display:flex;gap:12px;padding:12px 0}
+.astep+.astep{border-top:1px solid #F0F0F0}
+.astep .num,.stepcard .num{width:24px;height:24px;border-radius:50%;background:#E9EBEF;color:#999;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.astep .sn{font-size:15px;color:#666}.astep .sv{font-size:16px;margin-top:6px}
+.sph{display:flex;gap:6px;margin-top:8px}
+.sph i{width:64px;height:64px;border-radius:3px;display:block}
+.sph em{color:#999;font-style:normal}
+.sheet-tbl{margin:14px 16px 0;overflow-x:auto;border:1px solid #E5E5EA;border-radius:8px}
+.sheet-tbl table{border-collapse:collapse;font-size:13px;white-space:nowrap}
+.sheet-tbl th,.sheet-tbl td{padding:9px 12px;border-bottom:1px solid #F0F0F0;text-align:left}
+.sheet-tbl th{background:#F7F8FA;color:#666;font-weight:500}
+
+/* ---- create checklist ---- */
+.bigtitle{font-size:22px;font-weight:700;padding:16px 20px 4px}
+.tplrow{display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer}
+.tplrow.bt{border-top:1px solid #EEE;margin:0 0 0 0}
+.tplrow .t{font-size:17px}.tplrow .m{font-size:13px;color:#999;margin-top:3px}
+.tplrow .main{flex:1}
+
+/* ---- checklist exec (Vehicle repair) ---- */
+.execwrap{background:#EEF0F3;min-height:100%}
+.execwrap .nav{background:#EEF0F3}
+.exech{padding:6px 16px 6px}
+.projchip{display:inline-flex;align-items:center;gap:5px;margin-top:12px;border:1px solid #BFD6F6;background:#fff;color:var(--blue);border-radius:6px;padding:6px 10px;font-size:15px;cursor:pointer;max-width:330px}
+.projchip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stepcard{display:flex;align-items:center;gap:12px;margin:12px 16px 0;background:#fff;border-radius:8px;padding:18px 16px;cursor:pointer}
+.stepcard .num{background:#DCE9FB;color:var(--blue);border-radius:4px;width:24px;height:24px}
+.stepcard .sn{font-size:17px}.stepcard .sv{font-size:15px;color:#555;margin-top:6px}
+.stepcard .sph i{width:48px;height:48px}
+.sqbtn{width:48px;flex:none;background:#F2F2F7;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* ---- file detail ---- */
+.docview{padding:4px 0}
+.docmeta{font-size:13px;color:#888;padding:0 16px 10px;display:flex;align-items:center;gap:4px}
+.docmeta .ic{stroke:#888}
+.docblank{height:560px;margin:0 16px;border:1px dashed #E3E3E8;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#BBB;font-size:13px}
+
+/* ---- search ---- */
+.rescount{font-size:13px;color:#999;padding:6px 16px 0}
+.sh{font-size:13px;color:#888;font-weight:600;padding:18px 16px 6px}
+.tryrow{padding:16px;font-size:14px;color:#666}
+.tryq{display:inline-block;background:#F2F2F4;border-radius:14px;padding:5px 11px;margin:6px 6px 0 0;color:#333;cursor:pointer}
+
+/* ---- tools / settings ---- */
+.toolgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:16px}
+.tool{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.tool span{width:56px;height:56px;border-radius:14px;color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+
+/* ---- tab bar ---- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:83px;background:#fff;border-top:1px solid #EEE;display:flex;padding:7px 0 0;z-index:15}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:#777;cursor:pointer}
+.tb.on{color:var(--blue)}
+.tb .ic{stroke:#777}.tb.on .ic{stroke:var(--blue)}
+
+/* ---- overlays ---- */
+.sheet{border-radius:14px 14px 0 0}
+.sheet-h.left{justify-content:space-between;height:58px}
+.sheet-h.left .title{position:static;transform:none;flex:1;font-size:18px;font-weight:600}
+.sheet-h.left button:first-child:not(:last-child){margin-right:8px}
+.pk-sub{font-size:15px;color:#888;padding:0 16px 10px}
+.pk-body{padding-bottom:8px}
+.selrow{display:flex;align-items:center;gap:14px;padding:11px 16px;cursor:pointer;min-height:58px}
+.selrow .main{flex:1;min-width:0}
+.selrow .t{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.selrow .m{font-size:13px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.selrow .m.blue{color:var(--blue)}
+.selrow.dis2{opacity:.4;cursor:default}
+.selrow.on{background:#F5F9FF}
+.sico{width:36px;height:36px;border-radius:6px;background:#E6EEF9;display:flex;align-items:center;justify-content:center;flex:none}
+.sico .ic{stroke:#6F86A8}
+.sico.gen{background:var(--blue)}.sico.gen .ic{stroke:#fff}
+.sico.plus{background:#EBF3FE}.sico.plus .ic{stroke:var(--blue);width:20px;height:20px}
+.selrow .chev .ic{stroke:#999}
+.drill{width:40px;height:36px;margin-right:-10px;display:flex;align-items:center;justify-content:center;border-left:1px solid #EEE}
+.drill .ic{stroke:#888}
+.curtag{font-size:12px;color:#848484;background:#F0F0F0;border-radius:4px;padding:2px 6px;flex:none}
+.pkcrumb{padding:0 16px 10px;font-size:14px;color:var(--sub)}
+.pkcrumb .pkc{cursor:pointer}.pkcrumb .sep{color:#999;background:none;height:auto}.pkcrumb b{color:#000;font-weight:600}
+.bottombar.rel{position:relative;padding-bottom:34px}
+/* iOS grouped action sheet */
+.iosas{position:absolute;left:10px;right:10px;bottom:30px;z-index:31;display:flex;flex-direction:column;gap:8px;animation:up .22s ease}
+.iosas.still{animation:none}
+.iosas .grp{background:#fff;border-radius:13px;overflow:hidden}
+.iosas .ast{font-size:13px;color:#8A8A8E;text-align:center;padding:13px 16px;border-bottom:1px solid #E5E5EA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iosas .ai{text-align:center;font-size:18px;padding:16px;cursor:pointer;color:#111}
+.iosas .ai+.ai{border-top:1px solid #E5E5EA}
+.iosas .ai.red{color:#E5484D}
+.iosas .ai.cancel{font-weight:600}
+/* iOS alert */
+.alert{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:290px;background:#fff;border-radius:14px;z-index:31;overflow:hidden;animation:fadein .18s ease}
+.alert.still{animation:none}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.alert .at{font-size:17px;font-weight:600;text-align:center;padding:20px 16px 4px}
+.alert .am{font-size:13px;color:#444;text-align:center;line-height:1.5;padding:4px 16px 18px}
+.alert .ab{display:flex;border-top:1px solid #E5E5EA}
+.alert .ab div{flex:1;text-align:center;padding:12px;font-size:17px;color:var(--blue);cursor:pointer}
+.alert .ab div+div{border-left:1px solid #E5E5EA}
+.alert .ab .pri{font-weight:600}.alert .ab .red{color:#E5484D;font-weight:600}
+.ovinput{width:100%;background:#F2F2F7;border:none;border-radius:8px;padding:10px 12px;font-size:16px;outline:none;margin-top:8px;text-align:left}
+.ovinput:focus{box-shadow:0 0 0 2px var(--blue) inset}
+/* share to */
+.appgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 6px;padding:14px 12px 0}
+.app{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#666;cursor:pointer;text-align:center}
+.app span{width:50px;height:50px;border-radius:13px;color:#fff;font-weight:700;font-size:20px;display:flex;align-items:center;justify-content:center}
+/* misc sheets */
+.info-ill{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0 4px}
+.info-ill .box{width:96px;height:56px;border-radius:8px;background:#F2F2F2;display:flex;align-items:center;justify-content:center;font-size:12px;color:#555;flex-direction:column;gap:3px;overflow:hidden;text-align:center;padding:0 6px}
+.info-ill .box.g{background:#EEF4FF;color:var(--blue)}
+.info-txt{padding:8px 24px 0;font-size:15px;line-height:1.6;color:#333;text-align:center}
+.btnrow{display:flex;gap:12px;padding:20px 16px 0}
+.btnrow .bigbtn{flex:1;display:flex;justify-content:center}
+.opts{background:#F5F5F7}
+.picklist{margin:10px 16px 0}
+.prog{margin:16px 24px 0;height:6px;border-radius:3px;background:#EEE;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--blue);transition:width .2s}
+.kv{display:flex;justify-content:space-between;gap:16px;padding:12px 16px;font-size:15px;border-bottom:1px solid #F2F2F2}
+.kv span{color:#888}.kv b{font-weight:500;text-align:right}
+.menu .mi{font-size:16px}
+.selbar{padding:10px 16px 34px}
+.toast{bottom:130px}
+
+/* ---- sync with Figma Page 4 (2026-10-12) ---- */
+.ic.red{stroke:#E5484D}
+.ulink{text-decoration:underline;cursor:pointer}
+.tsub .ic.s{width:12px;height:12px;vertical-align:-1px}
+.empty2{padding:36px 16px;text-align:center;color:#999;font-size:15px;line-height:2}
+.empty2 .ulink{color:var(--sub)}
+.chip-new{border-style:dashed;border-radius:16px}
+.chips2{display:flex;gap:8px;overflow-x:auto;padding:0 16px 8px;scrollbar-width:none}
+.chips2::-webkit-scrollbar{display:none}
+.lchip{flex:none;background:#EBF3FE;border-radius:4px;padding:7px 9px;font-size:13px;color:#333;cursor:pointer;white-space:nowrap}
+.rv{color:var(--sub);font-size:15px;max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appic{width:24px;height:24px;border-radius:6px;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.selpanel{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.08);padding:18px 16px 34px;z-index:20}
+.spt{font-size:17px;font-weight:600;margin-bottom:14px}
+.spg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px}
+.spb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#333;cursor:pointer}
+.spb.dis{opacity:.35;cursor:default}
+.spi{width:44px;height:44px;border-radius:10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.14);display:flex;align-items:center;justify-content:center}
+.spi b{font-size:11px;font-weight:800}
+.cbx{width:22px;height:22px;border-radius:4px;border:1.5px solid #9A9A9A;flex:none;display:flex;align-items:center;justify-content:center;margin-left:auto}
+.cbx.on{background:var(--blue);border-color:var(--blue)}
+.alert2{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:300px;background:#fff;border-radius:14px;z-index:31;padding:22px 18px 18px;text-align:center;animation:fadein .18s ease}
+.alert2.still{animation:none}
+.alert2 .at{font-size:17px;font-weight:600}
+.alert2 .an{font-size:17px;font-weight:600;margin-top:10px}
+.alert2 .am2{font-size:13px;color:#999;margin-top:10px;line-height:1.5}
+.alert2 .am2 b{color:#333}
+.ab2{display:flex;gap:12px;margin-top:18px}
+.b2{flex:1;border:1px solid #DDD;border-radius:6px;padding:11px;font-size:16px;cursor:pointer}
+.b2.red{background:#E5484D;border-color:#E5484D;color:#fff;font-weight:500}
+.trow{display:flex;align-items:center;gap:12px;padding:8px 16px;cursor:pointer;min-height:56px}
+.trow.hdr2{cursor:default}
+.trow .main{flex:1;min-width:0}
+.trow .t{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .m{font-size:12px;color:#999;margin-top:1px}
+.trow.dis2{opacity:.4;cursor:default}
+.sico i{display:block;width:100%;height:100%;border-radius:6px}
+.sico.fold{background:#EEF3FA}
+.search.sm{margin:0 16px 8px}
+.drow{display:flex;align-items:center;gap:14px;padding:14px 0;margin:0 16px;border-bottom:1px solid #F0F0F0;cursor:pointer}
+.drow .dt{flex:1;font-size:16px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vav.sm{width:32px;height:32px;font-size:12px;border:none;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+
+/* ---- camera, matched to current Demo camera (2026-10-12) ---- */
+.screen.cam{background:#fff}
+.cam2{min-height:100%;display:flex;flex-direction:column;background:#fff;color:#111}
+.c2top{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.c2top .ic{width:26px;height:26px}
+.c2vc{display:flex;align-items:center;gap:4px;border:1.5px solid #333;border-radius:14px;padding:3px 10px 3px 7px;font-size:13px;font-weight:600}
+.c2vf{position:relative;height:476px;flex:none}
+.c2zoom{position:absolute;right:12px;top:160px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.c2zoom span{width:30px;height:30px;border-radius:50%;background:rgba(30,60,100,.55);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.c2zoom span.on{width:40px;height:40px;border:2px solid #fff;background:rgba(30,60,100,.35);font-size:15px}
+.c2tools{position:absolute;right:12px;bottom:18px;display:flex;flex-direction:column;gap:16px}
+.c2tools span{width:34px;height:34px;display:flex;align-items:center;justify-content:center}
+.c2tools .ic{stroke:#fff;width:28px;height:28px}
+.c2wm{left:12px;bottom:14px}
+.c2geo{position:absolute;left:50%;top:14px;transform:translateX(-50%);width:86%;background:rgba(0,0,0,.7);color:#fff;font-size:13px;line-height:1.45;border-radius:10px;padding:9px 12px;text-align:center}
+.c2bar{display:flex;height:52px}
+.c2proj{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:8px;padding:0 14px;background:#EEF5FD;cursor:pointer}
+.c2proj .c2pi .ic{stroke:#3D5A80;width:20px;height:20px}
+.c2pt{flex:1;min-width:0;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c2proj>.ic{stroke:#4A8BE8;width:18px;height:18px;flex:none}
+.c2pi{flex:none;display:flex}
+.c2team{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 12px;background:#CFE3FA;color:#1E3A5F;font-size:16px;font-weight:600;cursor:pointer}
+.c2tt{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c2team .ic{flex:none}
+.c2team .ic{stroke:#1E3A5F}
+.c2ctl{display:flex;align-items:center;justify-content:space-between;padding:22px 44px 8px}
+.c2side{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;color:#666;cursor:pointer;width:64px}
+.c2prev{width:40px;height:40px;border-radius:6px;border:1.5px solid #222;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px}
+.c2tpl{width:40px;height:40px;display:flex;align-items:center;justify-content:center}
+.c2tpl .ic{width:34px;height:34px;stroke:#222}
+.c2shutter{width:88px;height:88px;border-radius:50%;border:5px solid #111;background:#fff;cursor:pointer}
+.c2shutter:active{background:#E8E8E8}
+.c2modes{display:flex;justify-content:center;gap:18px;font-size:16px;color:#999;padding:16px 0 0;white-space:nowrap}
+.c2modes .on{color:#111;font-weight:600;position:relative}
+.c2modes .on::after{content:"";position:absolute;left:50%;bottom:-10px;width:5px;height:5px;border-radius:50%;background:#111;transform:translateX(-50%)}
+#geoCard{background:#FFFBEA;border:1.5px dashed #E6B800;border-radius:16px;padding:16px 18px}
+#geoCard h2{font-size:15px;font-weight:700;color:#7A5B00;margin-bottom:6px}
+#geoCard p{font-size:13px;color:#7A5B00;line-height:1.6;margin-bottom:10px}
+.gchips{display:flex;flex-direction:column;gap:6px}
+.gchips button{text-align:left;background:#fff;border-radius:8px;padding:8px 10px;font-size:14px;border:1px solid #F0E2A8}
+.gchips button:hover{background:#FFF3C4}
+.gchips small{display:block;color:#999;font-size:12px;margin-top:1px}
+
+/* ---- Auto save to Teamspace picker, matched to current app (2026-10-12) ---- */
+.sheet.sel2{top:250px;display:flex;flex-direction:column;padding-bottom:0;border-radius:18px 18px 0 0}
+.s2h{height:62px;display:flex;align-items:center;gap:10px;padding:0 20px}
+.s2h .title{flex:1;font-size:20px;font-weight:700}
+.s2h .ic{width:26px;height:26px}
+.search.s2s{margin:4px 20px 6px;padding:12px 14px;border-radius:8px}
+.sel2 .pk-body{flex:1;overflow-y:auto;padding-bottom:6px}
+.plabel{font-size:15px;color:#888;font-weight:500;padding:12px 20px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow2{display:flex;align-items:center;gap:14px;padding:9px 20px;cursor:pointer;min-height:62px}
+.prow2 .main{flex:1;min-width:0}
+.prow2 .t{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow2 .m{font-size:14px;color:#999;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow2 .m.pdist{display:flex;align-items:center;gap:3px;color:var(--blue);font-weight:600}
+.pdist .ic{width:15px;height:15px;stroke-width:2.2}
+.prow2>.ic.blue{width:28px;height:28px;stroke-width:2.4}
+.pth{width:44px;height:44px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;background:#E6EEF9}
+.pth.empty .ic{stroke:#6F86A8}
+.pth.plus{background:#EBF3FE}.pth.plus .ic{width:26px;height:26px}
+.pth.nop .ic{stroke:#1E3A5F}
+.pth.gen{background:var(--blue)}
+.s2done{padding:10px 16px 34px;background:#fff}
+</style>
+<style>
+*{-webkit-tap-highlight-color:transparent}
+/* full-screen app for phones: no frame, no fake status bar, no side panel */
+html,body{height:100%}
+body{display:block;padding:0;min-height:0;background:#fff;overflow:hidden}
+.phone{position:fixed;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:auto;padding:0;border-radius:0;background:#fff;box-shadow:none}
+.device{width:100%;height:100%;border-radius:0}
+.status,.homebar{display:none}
+.screen{top:0}
+.sheet.tall{top:12px}
+.sheet.sel2{top:150px}
+@media (min-width:600px){body{background:#E9ECF1}.phone{box-shadow:0 0 0 1px #D5D9E0}}
+</style>
+
+</head>
+<body>
+<div class="phone"><div class="device" id="device">
+  <div class="status" id="status"><span>9:41</span><span class="icons"><svg width="18" height="11" viewBox="0 0 18 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg><svg width="16" height="11" viewBox="0 0 16 11"><path d="M8 2.5c2.3 0 4.4.9 5.9 2.4l1.1-1.1A9.8 9.8 0 008 1 9.8 9.8 0 001 3.8l1.1 1.1A8.3 8.3 0 018 2.5zm0 3c1.5 0 2.8.6 3.8 1.5l1.1-1.1A6.9 6.9 0 008 4a6.9 6.9 0 00-4.9 1.9L4.2 7C5.2 6.1 6.5 5.5 8 5.5zm0 3c.7 0 1.3.3 1.7.7L8 11 6.3 9.2c.4-.4 1-.7 1.7-.7z" fill="currentColor"/></svg><svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="18" height="8" rx="1.8" fill="currentColor"/><rect x="23" y="4" width="1.5" height="4" rx=".7" fill="currentColor" opacity=".5"/></svg></span></div>
+  <div class="screen" id="screen"></div>
+  <div id="layer"></div>
+  <div class="homebar" id="homebar"></div>
+</div></div>
+<div hidden><span id="exTitle"></span><span id="exText"></span><div id="geoCard"></div></div>
+<script>
+/* ============ 项目子文件夹 完整 Demo（按 Figma 现有页面还原） ============ */
+const STORE_KEY = 'tm-subfolder-demo-v8-wind';
+const H = 3600e3, D = 24 * H, MAX_DEPTH = 3;
+const IC = {
+  back:'<path d="M15 5l-7 7 7 7"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  select:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.5 7.5 0 00-1.7-1L15 3.6h-4l-.4 2.4a7.5 7.5 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.5 7.5 0 001.7 1l.4 2.4h4l.4-2.4a7.5 7.5 0 001.7-1l2.3.9 2-3.4z"/>',
+  more:'<circle cx="5" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+  vmore:'<circle cx="12" cy="5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.4" fill="currentColor" stroke="none"/>',
+  folder:'<path d="M3 7.5A2 2 0 015 5.5h4l2 2h8a2 2 0 012 2V17a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>',
+  folderPlus:'<path d="M3 7.5A2 2 0 015 5.5h4l2 2h8a2 2 0 012 2V17a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M12 10.5v5M9.5 13h5"/>',
+  inbox:'<path d="M4 13l2.5-7h11L20 13v5a1 1 0 01-1 1H5a1 1 0 01-1-1z"/><path d="M4 13h4.5l1 2h5l1-2H20"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', chevR:'<path d="M9 6l6 6-6 6"/>', chevL:'<path d="M15 6l-6 6 6 6"/>', chevD:'<path d="M6 9l6 6 6-6"/>', updown:'<path d="M8 9l4-4 4 4M8 15l4 4 4-4"/>',
+  share:'<path d="M14 5l6 6-6 6"/><path d="M20 11H10a6 6 0 00-6 6v1"/>', shareBox:'<path d="M8 8H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-2"/><path d="M12 15V3M8 7l4-4 4 4"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>', download:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+  move:'<path d="M14 4h5a1 1 0 011 1v14a1 1 0 01-1 1h-5"/><path d="M4 12h11M11 8l4 4-4 4"/>',
+  trash:'<path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12"/>', note:'<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+  pin:'<path d="M12 21s-6.5-6-6.5-10.5a6.5 6.5 0 0113 0C18.5 15 12 21 12 21z"/><circle cx="12" cy="10.5" r="2.3"/>',
+  clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/>',
+  edit:'<path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>', doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>', docPlus:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M12 11v6M9 14h6"/>',
+  home:'<path d="M3 8l4-3 3 2 4-3 7 4v11H3z"/><circle cx="9" cy="13" r="2"/>', grid:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+  monitor:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/>', userPlus:'<circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0114 0M19 8v6M16 11h6"/>',
+  camera:'<path d="M9 4.5h6l1.6 2.2H20a1.5 1.5 0 011.5 1.5v10.3A1.5 1.5 0 0120 20H4a1.5 1.5 0 01-1.5-1.5V8.2A1.5 1.5 0 014 6.7h3.4z"/><circle cx="12" cy="13" r="3.6"/>',
+  camPlus:'<path d="M9 4.5h6l1.6 2.2H20a1.5 1.5 0 011.5 1.5v10.3A1.5 1.5 0 0120 20H4a1.5 1.5 0 01-1.5-1.5V8.2A1.5 1.5 0 014 6.7h3.4z"/><circle cx="12" cy="13" r="3.6"/>',
+  imgPlus:'<rect x="3" y="6" width="14" height="13" rx="2"/><path d="M3 15l4-4 4 4 2.5-2.5L17 16"/><path d="M19 3v6M16 6h6"/>', image:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M3 17l5-5 4 4 3-3 6 6"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>', menu:'<path d="M4 7h16M4 12h16M4 17h16"/>', flashOff:'<path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z"/><path d="M4 4l16 16"/>', flip:'<path d="M4 8h3l2-2h6l2 2h3v11H4z"/><path d="M9 13a3 3 0 015-2.2M15 13a3 3 0 01-5 2.2"/>', headset:'<path d="M4 15v-3a8 8 0 0116 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+  shield:'<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>', sliders:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>', user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>', template:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/>'
+};
+const svg = (n, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24">${IC[n]}</svg>`;
+const folderFill = '<svg class="ic" viewBox="0 0 24 24" style="fill:#fff;stroke:#fff"><path d="M3 7.5A2 2 0 015 5.5h4l2 2h8a2 2 0 012 2V17a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>';
+const inboxW = '<svg class="ic" viewBox="0 0 24 24" style="stroke:#fff;fill:none;stroke-width:2"><path d="M4 13l2.5-7h11L20 13v5a1 1 0 01-1 1H5a1 1 0 01-1-1z"/><path d="M4 13h4.5l1 2h5l1-2H20"/></svg>';
+const clipW = '<svg class="ic" viewBox="0 0 24 24" style="stroke:#fff;fill:none;stroke-width:2"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const phColor = h => `hsl(${h},40%,66%)`;
+
+/* ---------------- templates & seed ---------------- */
+const TPL = {
+  inspect:{name:'Turbine Inspection', steps:[{t:'Turbine No.',k:'text'},{t:'Blade photo',k:'photo'},{t:'Nacelle photo',k:'photo'}]},
+  maint:{name:'Maintenance Report', steps:[{t:'Maintenance type',k:'text'},{t:'Before',k:'photo'},{t:'After',k:'photo'}]},
+  install:{name:'Installation Checklist', steps:[{t:'Torque value (Nm)',k:'text'},{t:'Foundation',k:'photo'},{t:'Tower section',k:'photo'}]},
+  safety:{name:'Daily Safety Check', steps:[{t:'Crew on site',k:'text'},{t:'PPE check',k:'photo'},{t:'Hazards noted',k:'text'}]}
+};
+const TPL_ICON = {inspect:'search', maint:'sliders', install:'grid', safety:'shield'};
+const TAGS = ['blade','nacelle','tower','hub','gearbox','foundation','crane','bolt torque','cable','rotor','site overview','access road','substation','anemometer','ladder','PPE','yaw drive','generator'];
+const SAMPLE_FILES = [['turbine_layout.kmz','48 KB'],['maintenance_schedule.xlsx','95 KB'],['service_report_Q3.pdf','2.1 MB'],['blade_inspection.pdf','3.4 MB'],['torque_log.docx','310 KB'],['notes.txt','4 KB']];
+const SHARE_APPS = [['WhatsApp','#25D366'],['Telegram','#2AABEE'],['Zalo','#0068FF'],['LINE','#06C755'],['Messenger','#0084FF'],['Facebook','#1877F2'],['WA Business','#25D366'],['iMessage','#34C759'],['Email','#1A73E8'],['Copy link','#8E8E93'],['More','#C7C7CC']];
+const FARMS = [['f1','Cedar Ridge Wind Farm','Cedar Ridge, NE',[41.2031,-101.4210]],['f2','Prairie Creek Wind Farm','Prairie Creek, KS',[38.4410,-99.3302]],['f3','Blue Hill Wind Farm','Blue Hill, TX',[32.7120,-100.9104]],['f4','Red Mesa Wind Farm','Red Mesa, NM',[35.1806,-107.8833]]];
+function seed(){
+  const now = Date.now(); let seq = 1000; const nid = p => p + (seq++);
+  const db = { team:'Acme Wind Services', me:'u1',
+    members:[{id:'u1',name:'Elliott Chen',ini:'EC',c:'#5B8DEF'},{id:'u2',name:'Mona Wang',ini:'MW',c:'#E58A5C'},{id:'u3',name:'David Lee',ini:'DL',c:'#4CAF7A'},{id:'u4',name:'Tom Reyes',ini:'TR',c:'#9C6ADE'},{id:'u5',name:'Priya Nair',ini:'PN',c:'#D65C8A'},{id:'u6',name:'Andrew Hall',ini:'AH',c:'#3BA7B5'}],
+    projects:{}, folders:{}, items:[], gen:{}, autosave:{on:true, target:'f1'}, seq:0 };
+  let hue = 12;
+  const ph = (folder, n, ago, tags) => { for (let i = 0; i < n; i++){ hue = (hue + 47) % 360; db.items.push({id:nid('i'), type:'photo', folder, ts:now - ago - i*1500e3, by:db.members[(i + folder.length) % 6].id, hue, tag:tags[i % tags.length]}); } };
+  const sub = (folder, tpl, n, ago, tno) => { for (let i = 0; i < n; i++){ const t = TPL[tpl]; db.items.push({id:nid('i'), type:'checklist', folder, tpl, ts:now - ago - i*D, by:db.members[(i*2 + folder.length) % 6].id, values:t.steps.map((s,k)=> s.k==='photo' ? {photos:[(hue+=31)%360,(hue+=31)%360].slice(0, 1 + (k+i)%2)} : {text: s.t==='Turbine No.'? tno : s.t==='Maintenance type'? ['Annual service','Gearbox oil change','Blade repair'][i%3] : s.t==='Torque value (Nm)'? String(3200+i*50) : s.t==='Crew on site'? String(3+i) : 'None'})}); } };
+  const doc = (folder, name, size, ago, by) => db.items.push({id:nid('i'), type:'doc', folder, name, size, ts:now - ago, by:by || 'u3'});
+  FARMS.forEach(([fid, name, addr, [lat, lng]], fi) => {
+    db.projects[fid] = {id:fid, name, address:addr, lat, lng, updated:now - (fi+1)*2*H};
+    // farm-level items (they live in the farm's General)
+    ph(fid, 2 + (fi%2), (fi+3)*D, ['site overview','access road','substation']); doc(fid, 'site_permit_'+(2025+fi%2)+'.pdf', '860 KB', 20*D, 'u2'); sub(fid, 'safety', 1 + (fi%2), 2*D);
+    if (fi === 0) doc(fid, 'turbine_layout.kmz', '48 KB', 30*D, 'u4');
+    const NUMS = [[3,7,12,15],[21,24,28,33,36],[5,9,14],[40,41,47,52]][fi];
+    for (let t = 1; t <= NUMS.length; t++){
+      const num = NUMS[t-1], tid = fid + 't' + t, tno = 'T-' + String(num).padStart(2,'0');
+      db.folders[tid] = {id:tid, name:'Turbine ' + num, parent:fid, address:`${tno} · ${(lat + t*0.004).toFixed(4)}, ${(lng + t*0.006).toFixed(4)}`, lat:lat + t*0.004, lng:lng + t*0.006, updated:now - (t*3 + fi*5)*H};
+      const ins = tid + 'i', mnt = tid + 'm';
+      db.folders[ins] = {id:ins, name:'Installation', parent:tid, address:'', updated:now - (60 + t*2)*D};
+      db.folders[mnt] = {id:mnt, name:'Maintenance', parent:tid, address:'', updated:now - (t + fi)*D};
+      ph(ins, 2 + (t%2), (60 + t*2)*D, ['foundation','tower','crane','bolt torque']); sub(ins, 'install', 1, (60 + t*2)*D, tno);
+      ph(mnt, 2 + ((t+fi)%3), (t + fi)*D, ['gearbox','blade','nacelle','yaw drive','generator']); sub(mnt, 'maint', 1 + (t%2), (t + fi)*D, tno);
+      if (t === 2) doc(mnt, 'service_report_Q3.pdf', '2.1 MB', (t+fi)*D, 'u6');
+      if (t === 1 || t === 3) { ph(tid, 1 + (t===1?1:0), (t+fi+1)*D, ['blade','ladder']); sub(tid, 'inspect', 1, (t+fi+1)*D, tno); } // a few items not yet sorted → turbine's General
+    }
+  });
+  db.seq = seq; return db;
+}
+let DB;
+function load(){ try { const s = localStorage.getItem(STORE_KEY); if (s){ DB = JSON.parse(s); return; } } catch(e){} DB = seed(); }
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(DB)); } catch(e){} }
+const nid = p => p + (DB.seq++);
+
+/* ---------------- model helpers ---------------- */
+const isGen = id => typeof id === 'string' && id.startsWith('g:');
+const genOf = id => 'g:' + id;
+const genParent = id => id.slice(2);
+const isProj = id => !!DB.projects[id];
+const exists = id => id === 'NONE' ? true : isGen(id) ? exists(genParent(id)) : !!(DB.projects[id] || DB.folders[id]);
+const kids = (id, sort = 'recent') => isGen(id) || id === 'NONE' ? [] : Object.values(DB.folders).filter(f => f.parent === id).sort((a,b) => sort === 'name' ? a.name.localeCompare(b.name, undefined, {numeric:true}) : sort === 'old' ? a.updated - b.updated : b.updated - a.updated);
+const isCont = id => !isGen(id) && kids(id).length > 0;
+const genName = pid => DB.gen[pid] || 'General';
+const nameOf = id => id === 'NONE' ? 'No project' : isGen(id) ? genName(genParent(id)) : isProj(id) ? DB.projects[id].name : DB.folders[id].name;
+const addrOf = id => isGen(id) || id === 'NONE' ? '' : isProj(id) ? DB.projects[id].address : DB.folders[id].address;
+const parentOf = id => isGen(id) ? genParent(id) : (isProj(id) || id === 'NONE') ? null : DB.folders[id].parent;
+const projOf = id => { if (id === 'NONE') return 'NONE'; let c = id; while (!isProj(c)) c = parentOf(c); return c; };
+const store = id => isGen(id) ? genParent(id) : id;
+const viewOfStore = sid => isCont(sid) ? genOf(sid) : sid;
+const desc = id => { const out = []; const w = x => kids(x).forEach(k => { out.push(k.id); w(k.id); }); w(id); return out; };
+const pathOf = id => { const p = []; let c = id; while (c){ p.unshift(c); c = parentOf(c); } return p; };
+const pathStr = id => pathOf(id).map(nameOf).join(' › ');
+const destStr = sid => sid === 'NONE' ? 'No project' : pathStr(viewOfStore(sid));
+const depthOf = id => isProj(id) ? 0 : 1 + depthOf(DB.folders[id].parent);
+const heightOf = id => { const ks = kids(id); return ks.length ? 1 + Math.max(...ks.map(k => heightOf(k.id))) : 0; };
+const own = (sid, type) => DB.items.filter(i => i.folder === sid && (!type || i.type === type));
+const subtree = (id, type) => { const set = new Set(isGen(id) ? [genParent(id)] : [id, ...desc(id)]); return DB.items.filter(i => set.has(i.folder) && (!type || i.type === type)); };
+const viewItems = (id, type) => own(store(id), type).sort((a,b) => b.ts - a.ts);
+const itemsWord = arr => plural(arr.length, 'item');
+const coverHue = arr => { const p = arr.filter(i=>i.type==='photo').sort((a,b)=>b.ts-a.ts)[0]; return p ? p.hue : null; };
+const childCards = id => { const out = []; if (own(id).length) out.push({id:genOf(id), gen:true}); kids(id,'name').forEach(k => out.push({id:k.id})); return out; };
+const member = uid => DB.members.find(m => m.id === uid) || DB.members[0];
+const ago = t => { const d = Date.now() - t; if (d < 60e3) return 'just now'; if (d < H) return Math.round(d/60e3) + 'm ago'; if (d < D) return Math.round(d/H) + 'h ago'; if (d < 2*D) return 'yesterday'; return Math.round(d/D) + 'd ago'; };
+const dayKey = t => new Date(t).toDateString();
+const fmtDay = t => new Date(t).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+const dayLabel = t => { const k = dayKey(t); if (k === dayKey(Date.now())) return fmtDay(t) + ' (Today)'; return fmtDay(t); };
+const fmtTime = t => new Date(t).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+const fmtDate = t => new Date(t).toLocaleDateString('en-US', {month:'2-digit', day:'2-digit', year:'numeric'});
+const touch = sid => { let c = sid; while (c && c !== 'NONE'){ if (isProj(c)) { DB.projects[c].updated = Date.now(); break; } DB.folders[c].updated = Date.now(); c = DB.folders[c].parent; } };
+const countSummary = (id) => { const own_ = own(store(id)); const p = own_.filter(i=>i.type==='photo').length, c = own_.filter(i=>i.type==='checklist').length, d = own_.filter(i=>i.type==='doc').length; return {p, c, d}; };
+const docExt = n => (n.split('.').pop() || '').toUpperCase();
+const EXT_COLOR = {PDF:'#E5484D', DOCX:'#2B6BE6', DOC:'#2B6BE6', XLSX:'#1E9E5A', KMZ:'#E58A1F', TXT:'#6B7280'};
+
+/* ---------------- UI state ---------------- */
+let S;
+function freshUI(){ S = { tab:'library', stacks:{library:[{t:'home'}], tools:[{t:'tools'}], search:[{t:'search'}], settings:[{t:'settings'}]}, ov:null, justOpened:false, select:null, q:{projects:'', search:'', folders:''}, folderSort:'recent', cam:null, up:null, flash:null }; }
+const stack = () => S.stacks[S.tab];
+const topV = () => stack()[stack().length - 1];
+const push = v => { stack().push(v); };
+const pop = () => { if (stack().length > 1) stack().pop(); };
+const openOv = o => { S.ov = o; S.justOpened = true; };
+const CTX = {};
+
+/* ---------------- shared bits ---------------- */
+const backBtn = `<button data-act="back" aria-label="Back">${svg('back')}</button>`;
+function nav(left, title, right, cls=''){ return `<div class="nav ${cls}">${left||'<span></span>'}${title?`<span class="title">${title}</span>`:''}<div class="r">${right||''}</div></div>`; }
+function crumb(id){ if (isProj(id)) return ''; return `<div class="crumb" data-act="ancestors">${pathOf(id).slice(0,-1).map(x=>esc(nameOf(x))).join(' › ')} ${svg('chevR')}</div>`; }
+function photoTile(p, ctxKey, label){ const sel = S.select && S.select.ids.has(p.id);
+  return `<div class="ph ${sel?'picked':''} ${S.flash===p.id?'new':''}" data-act="photoTap" data-id="${p.id}" data-ctx="${ctxKey}" style="background:${phColor(p.hue)}"><span class="ptag">${esc(p.tag)}</span>${label?`<span class="src">${svg('folder')}${esc(label)}</span>`:''}${S.select?`<span class="sel">${sel?svg('check','s white'):''}</span>`:''}</div>`; }
+function dayGroups(list, ctxKey, labelFn){
+  CTX[ctxKey] = list.map(p=>p.id);
+  const groups = []; list.forEach(p => { const k = dayKey(p.ts); let g = groups.find(x=>x.k===k); if(!g){ g = {k, t:p.ts, items:[]}; groups.push(g); } g.items.push(p); });
+  return groups.map(g => { const allSel = S.select && g.items.every(p=>S.select.ids.has(p.id));
+    return `<div class="day"><div class="dayh"><span>${dayLabel(g.t)}</span><span class="ring ${allSel?'on':''}" data-act="selDay" data-k="${g.k}" data-ctx="${ctxKey}">${allSel?svg('check','s white'):''}</span></div><div class="grid">${g.items.map(p=>photoTile(p, ctxKey, labelFn ? labelFn(p) : '')).join('')}</div></div>`; }).join('');
+}
+const thumbFor = arr => { const h = coverHue(arr); return h === null ? `<div class="thumb ph-empty">${svg('image','gray')}</div>` : `<div class="thumb" style="background:${phColor(h)}"></div>`; };
+
+/* ---------------- screens ---------------- */
+function homeScreen(){
+  const as = DB.autosave; const projs = Object.values(DB.projects).sort((a,b)=>b.updated-a.updated);
+  const recent = DB.items.filter(i=>i.type==='photo').sort((a,b)=>b.ts-a.ts).slice(0,8); CTX.home = recent.map(p=>p.id);
+  const mems = DB.members.slice(0,3);
+  return `<div class="nav"><button class="teamname" data-act="toast" data-msg="Switch team (not in this demo)">${esc(DB.team)} ${svg('updown','s')}</button><div class="r"><button data-act="toast" data-msg="Web portal (not in this demo)">${svg('monitor')}</button><button data-act="cameraOpenHome" aria-label="Back to camera">${svg('close')}</button></div></div>
+  <div class="asbar" data-act="autosaveOpen">${svg('camPlus','blue')}<span class="ast">Auto save to <b>${esc(as.target && exists(as.target) ? destStr(as.target) : 'No project')}</b></span><span class="on">${as.on?'On':'Off'} ${svg('chevR','s gray')}</span></div>
+  <div class="hsec"><div class="hh"><span data-act="toast" data-msg="Members (not in this demo)">${plural(DB.members.length,'Member')} ${svg('chevR','s')}</span><button data-act="toast" data-msg="Invite (not in this demo)" aria-label="Invite">${svg('userPlus')}</button></div>
+    <div class="mstrip">${mems.map((m,i)=>{ const p = DB.items.find(x=>x.type==='photo'&&x.by===m.id); return `<div class="mcard" style="background:${p?phColor(p.hue):'#B9CCD9'}"><span class="mav" style="background:${m.c}">${m.ini}</span><span class="mname">${esc(m.name)}<br>${p?ago(p.ts):''}</span></div>`; }).join('')}</div></div>
+  <div class="hsec"><div class="hh"><span data-act="go" data-v="projects">${plural(projs.length,'Project')} ${svg('chevR','s')}</span><button data-act="newProject" aria-label="Create project">${svg('plus')}</button></div>
+    ${projs.slice(0,3).map(p=>projRow(p,true)).join('')}</div>
+  <div class="hsec"><div class="hh"><span data-act="go" data-v="allPhotos">All Photos ${svg('chevR','s')}</span></div></div>
+  <div class="hstrip">${recent.map(p=>`<div class="hph" data-act="photoTap" data-id="${p.id}" data-ctx="home" style="background:${phColor(p.hue)}"><span class="ptag">${esc(p.tag)}</span></div>`).join('')}</div><div class="pad"></div>`;
+}
+function projRow(p, home){ const arr = subtree(p.id); const nf = isCont(p.id) ? childCards(p.id).length : 0;
+  return `<div class="prow ${home?'big':''}" data-act="open" data-id="${p.id}">${thumbFor(arr)}<div class="main"><div class="t">${esc(p.name)}</div><div class="m">${itemsWord(arr)}${nf?` · ${plural(nf,'folder')}`:''}</div>${p.address?`<div class="picons">${svg('pin','s blue')}</div>`:''}</div>${home?'':`<button data-act="projMenu" data-id="${p.id}" data-stop="1" aria-label="More">${svg('vmore')}</button>`}</div>`; }
+function projectsScreen(){
+  const q = S.q.projects.trim().toLowerCase();
+  const list = Object.values(DB.projects).filter(p=>!q || p.name.toLowerCase().includes(q) || p.address.toLowerCase().includes(q)).sort((a,b)=>b.updated-a.updated);
+  return nav(backBtn,'Projects','') + `<div class="search">${svg('search','s gray')}<input id="qProjects" placeholder="Project" value="${esc(S.q.projects)}"></div>
+  ${list.map(p=>projRow(p,false)).join('')}
+  <div class="didnt">Didn't find your project?</div><div class="prow" data-act="newProject"><div class="thumb createbox">${svg('plus','blue')}</div><div class="main"><div class="t" style="color:var(--blue);font-weight:600">Create</div></div></div><div class="pad"></div>`;
+}
+const NEARBY = ['Cedar Ridge, NE','Prairie Creek, KS','Blue Hill, TX','Red Mesa, NM','O&M Building, Cedar Ridge','Substation Rd'];
+function locBlock(v, kind){ return `<div class="row" data-act="locAsk">${svg('pin')}<div class="main"><div class="t">${v.addr?esc(v.addr):(v.mode==='new'||v.t==='newProject'?'Location':'Add Location')}</div></div>${svg('chevR','s gray')}</div>${!v.addr?`<div class="chips2">${NEARBY.map(a=>`<span class="lchip" data-act="pickAddr" data-a="${esc(a)}">${esc(a)}</span>`).join('')}</div>`:''}<div class="hint pad16">Get reminded to select this ${kind} when nearby.</div>`; }
+function newProjectScreen(v){
+  return `<div class="gray-bg">${nav(backBtn,'Create project','')}<div class="card"><div class="field"><div>Project name<span class="req">*</span></div><input id="fName" placeholder="Name your project" value="${esc(v.name||'')}" maxlength="60"></div><div class="hr"></div>${locBlock(v,'project')}</div></div>
+  <div class="bottombar"><div class="bigbtn ${(v.name||'').trim()?'':'dis'}" data-act="createProject" id="doneBtn">Done</div></div>`;
+}
+function projSettingsScreen(v){
+  return `<div class="gray-bg">${nav(backBtn,'Project settings',`<button data-act="delProjAsk" data-id="${v.id}" aria-label="Delete project">${svg('trash','red')}</button>`)}<div class="card"><div class="field"><div>Project name<span class="req">*</span></div><input id="fName" value="${esc(v.name||'')}" maxlength="60"></div><div class="hr"></div>${locBlock(v,'project')}</div>
+  <div class="card"><div class="row" data-act="toast" data-msg="Who has access (not in this demo)">${svg('user')}<div class="main"><div class="t">Who has access</div><div class="m">Select members</div></div>${svg('chevR','s gray')}</div></div>
+  <div class="card"><div class="row" data-act="toast" data-msg="SharePoint (not in this demo)"><span class="appic" style="background:#038387">S</span><div class="main"><div class="t">SharePoint</div><div class="m">Communication site/site/.../Folder name</div></div>${svg('chevR','s gray')}</div><div class="hr"></div><div class="row" data-act="toast" data-msg="Google Drive (not in this demo)"><span class="appic" style="background:#1FA463">G</span><div class="main"><div class="t">Google Drive</div><div class="m">Google Drive/.../Folder Name</div></div>${svg('chevR','s gray')}</div></div></div>
+  <div class="bottombar"><div class="bigbtn ${(v.name||'').trim()?'':'dis'}" data-act="saveProject" id="doneBtn">Done</div></div>`;
+}
+function nodeHeader(id, tab){
+  const cont = isCont(id); const c = countSummary(id);
+  const cnt = tab==='checklists' ? plural(c.c,'checklist') : tab==='docs' ? plural(c.d,'doc') : plural(c.p,'photo');
+  const sub = cont ? plural(childCards(id).length,'folder') : `${cnt} · <span class="ulink" data-act="toast" data-msg="Members (not in this demo)">${plural(DB.members.length,'member')}</span> ${svg('chevR','s gray')}`;
+  return `<div class="hdr">${crumb(id)}<div class="titlebox"><div class="picon ${isGen(id)?'gen':''}">${isGen(id)?inboxW:folderFill}</div><div style="min-width:0;flex:1"><div class="tname">${esc(nameOf(id))}</div>${addrOf(id)?`<div class="tsub ell">${esc(addrOf(id))}</div>`:''}<div class="tsub">${sub}</div></div></div></div>`;
+}
+function nodeScreen(v){
+  if (!exists(v.id)) return nav(backBtn,'','') + '<div class="empty">This folder no longer exists.</div>';
+  if (isGen(v.id) && !isCont(genParent(v.id))) v.id = genParent(v.id);
+  const id = v.id, cont = isCont(id), tab = v.tab || 'photos', sel = S.select;
+  const right = `<button data-act="go" data-v="searchTab" aria-label="Search">${svg('search')}</button>${!cont ? `<button data-act="selStart" aria-label="Select">${svg('select')}</button>` : ''}<button data-act="nodeMenu" aria-label="Settings">${svg(isProj(id)||isGen(id)?'gear':'more')}</button>`;
+  let h = sel ? `<div class="nav"><span></span><span class="title">${sel.ids.size} item${sel.ids.size===1?'':'s'} selected</span><div class="r"><button class="txtbtn" data-act="selCancel">Cancel</button></div></div>` : nav(backBtn,'',right) + nodeHeader(id, cont ? null : tab);
+  if (cont){
+    const cards = childCards(id);
+    h += `<div class="acts"><div class="btn pri" data-act="shareOpen" data-kind="share">${svg('link','s white')}Share</div><div class="btn sec" data-act="shareOpen" data-kind="download">Download ${svg('chevD','s')}</div></div>`;
+    h += `<div class="fsec"><div class="fhead"><div class="fcount" data-act="go" data-v="folders">${cards.length} Folder${cards.length===1?'':'s'} ${svg('chevR','s')}</div>${depthOf(id) < MAX_DEPTH ? `<div class="link" data-act="newFolder">${svg('plus','s blue')}New folder</div>` : ''}</div><div class="ggrid">`;
+    cards.forEach(c => { const arr = c.gen ? own(id) : subtree(c.id); const hue = coverHue(arr); const sub = !c.gen && isCont(c.id) ? plural(childCards(c.id).length,'folder') : itemsWord(arr); const upd = c.gen ? Math.max(0, ...arr.map(i=>i.ts)) : DB.folders[c.id].updated;
+      h += `<div class="gcard ${c.gen?'gen':''}" data-act="open" data-id="${c.id}"><div class="gc" style="${hue!==null?`background:${phColor(hue)}`:''}">${hue===null?svg(c.gen?'inbox':'folder','gray'):''}<span class="badge">${svg(c.gen?'inbox':'folder','s')}</span>${!c.gen&&isCont(c.id)?`<span class="nest">${svg('folder','s white')}${childCards(c.id).length}</span>`:''}</div><div class="gn">${esc(nameOf(c.id))}</div>${addrOf(c.id)?`<div class="ga">${svg('pin')}${esc(addrOf(c.id))}</div>`:''}<div class="gm">${sub}${upd?' · '+ago(upd):''}</div></div>`; });
+    return h + `</div></div><div class="pad"></div>`;
+  }
+  if (!sel && !isGen(id) && depthOf(id) < MAX_DEPTH) h += `<div><span class="chip-new" data-act="newFolder">${svg('plus','s blue')}New folder</span></div>`;
+  h += `<div class="tabs">${[['photos','Photos'],['checklists','Checklists'],['docs','Docs']].map(([k,l])=>`<div class="tab ${tab===k?'on':''}" data-act="tab" data-tab="${k}">${l}</div>`).join('')}</div>`;
+  const cbx = on => `<span class="cbx ${on?'on':''}">${on?svg('check','s white'):''}</span>`;
+  if (tab === 'photos'){
+    const list = viewItems(id,'photo');
+    if (!sel) h += `<div class="acts"><div class="btn pri" data-act="leafShare" data-kind="share">${svg('link','s white')}Share</div><div class="btn sec" data-act="leafShare" data-kind="download">Download ${svg('chevD','s')}</div></div>`;
+    h += list.length ? dayGroups(list, 'node:'+id) : `<div class="empty2">No uploaded photos.<br><span class="ulink" data-act="uploadOpen">Upload from device</span></div>`;
+  } else if (tab === 'checklists'){
+    const subs = viewItems(id,'checklist'); const byTpl = {};
+    subs.forEach(s => { (byTpl[s.tpl] = byTpl[s.tpl] || []).push(s); });
+    const keys = Object.keys(byTpl).sort((a,b)=>byTpl[b][0].ts - byTpl[a][0].ts);
+    h += keys.length ? keys.map(k => { const arr = byTpl[k]; const mem = new Set(arr.map(s=>s.by)).size; const ph0 = arr.map(s=>s.values.find(x=>x.photos&&x.photos.length)).find(Boolean); return `<div class="clrow" data-act="${sel?'selToggle':'openTpl'}" data-k="${k}" data-id="${k}"><div class="clthumb" style="background:${ph0?phColor(ph0.photos[0]):'#8FA8C8'}">${clipW}<span>CHECKLIST</span></div><div class="main"><div class="t">${esc(TPL[k].name)}</div><div class="m">${plural(arr.length,'list')} · ${plural(mem,'member')}</div></div>${sel?cbx(sel.ids.has(k)):''}</div>`; }).join('') : `<div class="empty2">No checklists yet.</div>`;
+  } else {
+    const list = viewItems(id,'doc');
+    h += list.length ? list.map(d=>`<div class="docrow" data-act="${sel?'selToggle':'openDoc'}" data-id="${d.id}"><div class="fico"><span style="background:${EXT_COLOR[docExt(d.name)]||'#6B7280'}">${docExt(d.name)}</span></div><div class="main"><div class="t">${esc(d.name)}</div><div class="m">${d.size} · ${fmtDate(d.ts)} · ${esc(member(d.by).name.split(' ')[0])}</div></div>${sel?cbx(sel.ids.has(d.id)):`<button data-act="itemMenu" data-id="${d.id}" data-stop="1" aria-label="More">${svg('vmore')}</button>`}</div>`).join('') : `<div class="empty2">No docs yet.</div>`;
+  }
+  return h + `<div class="pad"></div>`;
+}
+function foldersScreen(v){
+  return nav(backBtn, esc(nameOf(v.id)), '') + `<div class="search">${svg('search','s gray')}<input id="qFolders" placeholder="Search folders" value="${esc(S.q.folders)}"></div>
+  <div class="sortbar"><span id="fCount"></span><button data-act="sortFolders">${{recent:'Recently updated',old:'Least recently updated',name:'Name'}[S.folderSort]} ${svg('chevD','s')}</button></div><div id="fRows"></div>
+  ${depthOf(v.id) < MAX_DEPTH ? `<div class="prow" data-act="newFolder"><div class="thumb createbox">${svg('plus','blue')}</div><div class="main"><div class="t" style="color:var(--blue);font-weight:600">New folder</div></div></div>` : ''}<div class="pad"></div>`;
+}
+function folderRows(v){
+  const q = S.q.folders.trim().toLowerCase();
+  const cards = [...(own(v.id).length ? [{id:genOf(v.id), gen:true}] : []), ...kids(v.id, S.folderSort).map(k=>({id:k.id}))].filter(c => !q || nameOf(c.id).toLowerCase().includes(q) || addrOf(c.id).toLowerCase().includes(q));
+  const fc = document.getElementById('fCount'); if (fc) fc.textContent = plural(cards.length,'folder');
+  return cards.map(c => { const arr = c.gen ? own(v.id) : subtree(c.id); return `<div class="prow" data-act="open" data-id="${c.id}">${thumbFor(arr)}<div class="main"><div class="t">${esc(nameOf(c.id))}${c.gen?'<span class="defchip">Default</span>':''}</div><div class="m">${!c.gen&&isCont(c.id)?plural(childCards(c.id).length,'folder')+' · ':''}${itemsWord(arr)}${c.gen?'':' · '+ago(DB.folders[c.id].updated)}</div>${addrOf(c.id)?`<div class="m blue">${svg('pin','s blue')} ${esc(addrOf(c.id))}</div>`:''}</div>${c.gen?'':`<button data-act="folderMenu" data-id="${c.id}" data-stop="1" aria-label="More">${svg('vmore')}</button>`}</div>`; }).join('') || '<div class="empty">No matching folders</div>';
+}
+function folderFormScreen(v){
+  const edit = v.mode !== 'new'; const p = edit ? DB.folders[v.id].parent : v.parent;
+  return `<div class="gray-bg">${nav(backBtn, edit?'Folder settings':'New folder', edit?`<button data-act="delFolderAsk" data-id="${v.id}" aria-label="Delete folder">${svg('trash','red')}</button>`:'')}<div class="card"><div class="field"><div>Folder name<span class="req">*</span></div><input id="fName" placeholder="Name your folder" value="${esc(v.name||'')}" maxlength="40"></div><div class="hr"></div>
+  ${locBlock(v,'folder')}<div class="hr"></div>
+  <div class="row ${edit?'':'static'}" data-act="${edit?'moveFolderOpen':'noop'}" data-id="${v.id||''}">${svg('move')}<div class="main"><div class="t">Save in</div></div><span class="rv">${esc(pathStr(p))}</span>${edit?svg('chevR','s gray'):''}</div></div></div>
+  <div class="bottombar"><div class="bigbtn ${(v.name||'').trim()?'':'dis'}" data-act="saveFolder" id="doneBtn">Done</div></div>`;
+}
+function allPhotosScreen(){ const list = DB.items.filter(i=>i.type==='photo').sort((a,b)=>b.ts-a.ts); return nav(backBtn,'All Photos','') + dayGroups(list, 'all', p => nameOf(projOf(p.folder))) + '<div class="pad"></div>'; }
+function photoScreen(v){
+  const ids = (CTX[v.ctx] || [v.id]).filter(id => DB.items.some(i=>i.id===id));
+  let idx = ids.indexOf(v.id); if (idx < 0) idx = 0;
+  const p = DB.items.find(i=>i.id===ids[idx]); if (!p) return `<div class="viewer"><div class="vtop"><button data-act="back">${svg('back','white')}</button></div></div>`;
+  v.id = p.id; const m = member(p.by); const d = new Date(p.ts);
+  return `<div class="viewer"><div class="vtop"><button data-act="back" aria-label="Back">${svg('back','white')}</button><span class="vav" style="background:${m.c}">${m.ini}</span><div class="vwho"><div>${esc(m.name)}</div><div class="vt">${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${fmtTime(p.ts)}</div></div><button data-act="photoInfo" aria-label="Info">${svg('info','white')}</button></div>
+  <div class="vimg" style="background:${phColor(p.hue)}"><span class="vtag">${esc(p.tag)}</span><div class="wm"><div class="wmt">${d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})}<small>${d.getHours()<12?'AM':'PM'}</small></div><div class="wmd">${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}<br>${d.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="wma">${esc(addrOf(p.folder)||addrOf(projOf(p.folder))||'Acme Inc')}</div></div>
+  ${idx>0?`<button class="vnav l" data-act="viewerNav" data-d="-1" aria-label="Previous">${svg('chevL','white')}</button>`:''}${idx<ids.length-1?`<button class="vnav r" data-act="viewerNav" data-d="1" aria-label="Next">${svg('chevR','white')}</button>`:''}</div>
+  <div class="vcount">${idx+1} / ${ids.length}</div>
+  <div class="vbar"><div class="b" data-act="photoShare">${svg('shareBox','white')}Share</div><div class="b" data-act="photoDownload">${svg('download','white')}Download</div><div class="b" data-act="toast" data-msg="Note (not in this demo)">${svg('note','white')}Note</div><div class="b" data-act="photoMove">${svg('move','white')}Move</div><div class="b" data-act="photoDelete">${svg('trash','white')}Delete</div></div></div>`;
+}
+const iconSvg = (paths, w=1.8) => `<svg class="ic" viewBox="0 0 24 24" style="stroke-width:${w}">${paths}</svg>`;
+function camLocs(){ const c = S.cam; const pr = projOf(c.target);
+  return [...Object.values(DB.projects).filter(p=>p.address).map(p=>({label:p.address, target:p.id})), ...Object.values(DB.folders).filter(f=>f.address).map(f=>({label:f.address, target:f.id}))].filter(l => pr === 'NONE' || projOf(l.target) === pr); }
+function cameraScreen(){
+  const c = S.cam; const now = new Date(); const tgt = c.target; const hh = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const label = tgt === 'NONE' ? 'No Project' : nameOf(tgt);
+  const addr = (tgt !== 'NONE' && (addrOf(tgt) || addrOf(projOf(tgt)))) || '1984 Homestead Rd, Cupertino, CA 95014';
+  return `<div class="cam2">
+  <div class="c2top"><button data-act="camClose" aria-label="Close camera">${svg('menu')}</button>${svg('flashOff')}<span class="c2vc">${svg('shield','s')}Verify Center</span>${svg('headset')}${svg('flip')}</div>
+  <div class="c2vf" style="background:linear-gradient(180deg,${phColor((c.shots*53+200)%360)} 0%,${phColor((c.shots*53+230)%360)} 100%)">
+    <div class="c2zoom"><span>10</span><span>2</span><span class="on">1×</span><span>.5</span></div>
+    <div class="c2tools"><span>${svg('edit','white')}</span><span>${iconSvg('<circle cx="12" cy="12" r="4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>')}</span></div>
+    <div class="wm c2wm"><div class="wmt">${hh}<small>${now.getHours()<12?'AM':'PM'}</small></div><div class="wmd">${now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}<br>${now.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="wma">${esc(addr)}</div></div>
+    ${c.banner?`<div class="c2geo">${c.banner}</div>`:''}</div>
+  <div class="c2bar"><div class="c2proj" data-act="camTarget"><span class="c2pi">${iconSvg('<path d="M14 4h5a1 1 0 011 1v14a1 1 0 01-1 1h-5"/><path d="M4 12h11M11 8l4 4-4 4"/>')}</span><span class="c2pt">${esc(label)}</span>${svg('chevD','s')}</div><div class="c2team" data-act="camHome"><span class="c2tt">${esc(DB.team)}</span>${svg('chevR','s')}</div></div>
+  <div class="c2ctl"><div class="c2side" data-act="camClose">${c.last!==undefined?`<div class="c2prev" style="background:${phColor(c.last)}"><b>${c.shots}</b></div>`:`<div class="c2prev" style="background:linear-gradient(135deg,#7FB2E5,#2F5E8C)"></div>`}<span>Preview</span></div><div class="c2shutter" data-act="shoot" aria-label="Take photo"></div><div class="c2side" data-act="toast" data-msg="Templates (not in this demo)"><div class="c2tpl">${iconSvg('<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9h8M8 13h8M8 17h5"/>')}</div><span>Templates</span></div></div>
+  <div class="c2modes"><span>Reports</span><span>Video</span><span class="on">Photo</span><span>Clock</span><span>Checklist</span></div></div>`;
+}
+function geoCard(){ const c = S.cam; if (!c) return '';
+  return `<h2>演示用 · 模拟定位</h2><p>点一个位置，模拟走到那里拍照（真实产品里由 GPS 自动判断，不会出现这个面板）：</p><div class="gchips">${camLocs().map(l=>`<button data-act="camGeo" data-id="${l.target}">📍 ${esc(nameOf(l.target))}<small>${esc(l.label)}</small></button>`).join('')}<button data-act="camGeo" data-id="__none">📍 不在任何文件夹附近</button></div>`; }
+function uploadScreen(){
+  const u = S.up; const n = u.sel.size;
+  return nav(`<button data-act="back" aria-label="Back">${svg('back')}</button>`, 'Select Photo', '') + `<div class="dayh" style="padding:12px 16px">Today (${u.album.length})<span class="ring ${n===u.album.length?'on':''}" data-act="upAll">${n===u.album.length?svg('check','s white'):''}</span></div>
+  <div class="grid">${u.album.map((h,i)=>`<div class="ph ${u.sel.has(i)?'picked':''}" data-act="upPick" data-i="${i}" style="background:${phColor(h)}"><span class="sel tl">${u.sel.has(i)?svg('check','s white'):''}</span></div>`).join('')}</div><div style="height:150px"></div>
+  <div class="bottombar col"><div class="destrow" data-act="upTarget">${svg('folder','s')}<span>Upload to <b>${esc(destStr(u.target))}</b></span>${svg('chevR','s')}</div><div class="bigbtn ${n?'':'dis'}" data-act="doUpload">Upload${n?` (${n})`:''}</div></div>`;
+}
+function tplScreen(v){ // checklist data page (template within a folder)
+  const id = v.node; const subs = viewItems(id,'checklist').filter(s=>s.tpl===v.k); const mem = new Set(subs.map(s=>s.by)).size; const tab = v.tab || 'activity';
+  let h = nav(backBtn,'',`<button data-act="toast" data-msg="Template settings (not in this demo)" aria-label="Settings">${svg('gear')}</button>`) + `<div class="hdr"><div class="titlebox"><div class="picon green">${clipW}</div><div><div class="tname">${esc(TPL[v.k].name)}</div><div class="tsub">${plural(subs.length,'list')} · ${plural(mem,'member')}</div><div class="tsub ell">${svg('folder','s')} ${esc(destStr(store(id)))}</div></div></div></div>`;
+  h += `<div class="tabs">${[['activity','Activity'],['sheet','Sheet']].map(([k,l])=>`<div class="tab ${tab===k?'on':''}" data-act="tplTab" data-tab="${k}">${l}</div>`).join('')}</div>`;
+  h += `<div class="filters"><span>Date ${svg('chevD','s')}</span><span>Member ${svg('chevD','s')}</span><span>Folder ${svg('chevD','s')}</span></div>`;
+  if (!subs.length) return h + '<div class="empty">No lists here anymore</div>';
+  if (tab === 'activity') h += subs.map(s=>{ const m = member(s.by); return `<div class="act"><div class="acth"><span class="vav" style="background:${m.c}">${m.ini}</span><div style="flex:1"><div class="an">${esc(m.name)}</div><div class="am">${fmtTime(s.ts)} · ${fmtDay(s.ts)}</div></div><button data-act="itemMenu" data-id="${s.id}" aria-label="More">${svg('vmore')}</button></div><div class="actcard">${TPL[s.tpl].steps.map((st,i)=>{ const val = s.values[i]||{}; return `<div class="astep"><span class="num">${i+1}</span><div style="flex:1"><div class="sn">${esc(st.t)}</div>${st.k==='photo'?`<div class="sph">${(val.photos||[]).map(hh=>`<i style="background:${phColor(hh)}"></i>`).join('')||'<em>—</em>'}</div>`:`<div class="sv">${esc(val.text||'—')}</div>`}</div></div>`; }).join('')}</div></div>`; }).join('');
+  else h += `<div class="sheet-tbl"><table><tr><th>Date</th><th>Member</th>${TPL[v.k].steps.map(s=>`<th>${esc(s.t)}</th>`).join('')}</tr>${subs.map(s=>`<tr><td>${fmtDay(s.ts)}</td><td>${esc(member(s.by).name.split(' ')[0])}</td>${TPL[s.tpl].steps.map((st,i)=>`<td>${st.k==='photo'?((s.values[i]||{}).photos||[]).length+' 📷':esc((s.values[i]||{}).text||'')}</td>`).join('')}</tr>`).join('')}</table></div>`;
+  return h + '<div class="pad"></div>';
+}
+function clCreateScreen(v){
+  return `<div class="gray-bg">${nav(`<button data-act="back" aria-label="Close">${svg('close')}</button>`,'Create Checklist','')}<div class="bigtitle">Start with a template</div><div class="card">${Object.entries(TPL).map(([k,t],i)=>`<div class="tplrow ${i?'bt':''}" data-act="startExec" data-k="${k}">${svg(TPL_ICON[k])}<div class="main"><div class="t">${t.name}</div><div class="m">${plural(t.steps.length,'step')}</div></div></div>`).join('')}<div class="tplrow bt blue" data-act="toast" data-msg="Create from scratch (not in this demo)">${svg('plus','blue')}<div class="main"><div class="t" style="color:var(--blue)">Create from scratch</div></div></div></div></div>`;
+}
+function clExecScreen(v){
+  const t = TPL[v.k]; const done = t.steps.every((s,i)=> s.k==='photo' ? (v.values[i].photos||[]).length : (v.values[i].text||'').trim());
+  return `<div class="execwrap">${nav(backBtn,'','')}<div class="exech"><div class="tname big">${esc(t.name)} ${svg('updown','s')}</div><div class="projchip" data-act="execTarget">${svg('folderPlus','s blue')}<span>${esc(destStr(v.target))}</span>${svg('chevR','s blue')}</div></div>
+  ${t.steps.map((s,i)=>{ const val = v.values[i]; const filled = s.k==='photo' ? (val.photos||[]).length : (val.text||'').trim(); return `<div class="stepcard" data-act="execStep" data-i="${i}"><span class="num">${i+1}</span><div style="flex:1;min-width:0"><div class="sn">${esc(s.t)}<span class="req">*</span></div>${filled ? (s.k==='photo' ? `<div class="sph">${val.photos.map(hh=>`<i style="background:${phColor(hh)}"></i>`).join('')}</div>` : `<div class="sv">${esc(val.text)}</div>`) : ''}</div>${filled?svg('check','blue'):svg(s.k==='photo'?'camera':'edit','gray')}</div>`; }).join('')}
+  <div style="height:120px"></div></div><div class="bottombar"><div class="sqbtn" data-act="toast" data-msg="Checklist settings (not in this demo)">${svg('sliders')}</div><div class="bigbtn ${done?'':'dis'}" data-act="submitExec">Submit</div></div>`;
+}
+function docScreen(v){
+  const d = DB.items.find(i=>i.id===v.id); if (!d) return nav(backBtn,'','') + '<div class="empty">This file was deleted</div>';
+  return nav(backBtn, esc(d.name), `<button data-act="itemMenu" data-id="${d.id}" aria-label="More">${svg('vmore')}</button>`) + `<div class="docview"><div class="docmeta">${svg('folder','s')} ${esc(destStr(d.folder))} · ${d.size} · ${esc(member(d.by).name)}</div><div class="docblank">${svg('doc','gray')}<span>${docExt(d.name)} preview</span></div></div>`;
+}
+function searchScreen(){
+  const q = S.q.search.trim().toLowerCase();
+  let res = '', count = 0;
+  if (q){
+    const folds = [...Object.values(DB.projects).filter(p=>p.name.toLowerCase().includes(q)||p.address.toLowerCase().includes(q)).map(p=>p.id), ...Object.values(DB.folders).filter(f=>f.name.toLowerCase().includes(q)||f.address.toLowerCase().includes(q)).map(f=>f.id)];
+    const docs = DB.items.filter(i=>i.type==='doc'&&i.name.toLowerCase().includes(q));
+    const phs = DB.items.filter(i=>i.type==='photo'&&(i.tag.toLowerCase().includes(q)||nameOf(i.folder).toLowerCase().includes(q))).sort((a,b)=>b.ts-a.ts);
+    count = phs.length;
+    if (folds.length) res += `<div class="sh">Projects & folders</div>` + folds.map(id=>`<div class="prow sm" data-act="open" data-id="${id}">${thumbFor(subtree(id))}<div class="main"><div class="t">${esc(nameOf(id))}</div><div class="m">${isProj(id)?'Project':esc(pathOf(id).slice(0,-1).map(nameOf).join(' › '))}${addrOf(id)?' · '+esc(addrOf(id)):''}</div></div></div>`).join('');
+    if (docs.length) res += `<div class="sh">Docs</div>` + docs.map(d=>`<div class="docrow" data-act="openDoc" data-id="${d.id}"><div class="fico"><span style="background:${EXT_COLOR[docExt(d.name)]||'#6B7280'}">${docExt(d.name)}</span></div><div class="main"><div class="t">${esc(d.name)}</div><div class="m">${esc(destStr(d.folder))}</div></div></div>`).join('');
+    if (phs.length) res += `<div class="sh">Photos</div><div class="acts" style="margin-top:4px"><div class="btn pri" data-act="searchShare">${svg('share','s white')}Share</div><div class="btn sec" data-act="searchDownload">Download ${svg('chevD','s')}</div></div>` + dayGroups(phs, 'search', p => nameOf(viewOfStore(p.folder)));
+    if (!res) res = `<div class="empty">No results</div>`;
+  } else res = `<div class="tryrow">Try ${['blade','gearbox','Turbine 12','Maintenance','Cedar Ridge'].map(t=>`<span class="tryq" data-act="tryQ" data-q="${t}">${t}</span>`).join('')}</div><div class="hint pad16">Photos are matched by AI tags (the label on each photo) and by folder name.</div>`;
+  return `<div class="nav"><span></span><div class="r"><button data-act="toast" data-msg="Select (not in this demo)">${svg('select')}</button></div></div><div class="search big">${svg('search','s')}<input id="qSearch" placeholder="Search photos, folders, docs" value="${esc(S.q.search)}">${q?`<button data-act="clearQ" aria-label="Clear">${svg('close','s gray')}</button>`:''}</div>
+  <div class="filters"><span>Time Range ${svg('chevD','s')}</span><span>Projects ${svg('chevD','s')}</span><span>Members ${svg('chevD','s')}</span><span>Type ${svg('chevD','s')}</span></div><div class="rescount">${q?plural(count,'Result'):''}</div><div id="sRes">${res}</div><div class="pad"></div>`;
+}
+function toolsScreen(){ return `<div class="nav"><span class="title" style="position:static;transform:none;font-size:22px">Tools</span></div><div class="toolgrid">${[['PDF','#E5484D'],['Excel','#1E9E5A'],['ZIP','#6B7280'],['KMZ','#E58A1F'],['Link','#0070F4'],['Collage','#9C6ADE']].map(([t,c])=>`<div class="tool" data-act="toast" data-msg="${t} (not in this demo)"><span style="background:${c}">${t[0]}</span>${t}</div>`).join('')}</div>`; }
+function settingsScreen(){ return `<div class="nav"><span class="title" style="position:static;transform:none;font-size:22px">Settings</span></div><div class="gray-bg" style="min-height:auto;padding-bottom:20px"><div class="card"><div class="row" data-act="toast" data-msg="Members & Access (not in this demo)">${svg('userPlus')}<div class="main"><div class="t">Members & Access</div></div>${svg('chevR','s')}</div><div class="hr"></div><div class="row" data-act="toast" data-msg="Permissions (not in this demo)">${svg('shield')}<div class="main"><div class="t">Permissions</div></div>${svg('chevR','s')}</div></div><div class="card"><div class="row" data-act="resetAsk">${svg('trash')}<div class="main"><div class="t" style="color:#E5484D">Reset demo data</div><div class="m">恢复初始的 4 个风场示例</div></div></div></div></div>`; }
+
+/* ---------------- overlays ---------------- */
+function overlayHtml(){
+  const o = S.ov; if (!o) return ''; const still = S.justOpened ? '' : ' still';
+  const sheet = (inner, cls='') => `<div class="dim" data-act="closeOv"></div><div class="sheet ${cls}${still}">${inner}</div>`;
+  const head = (title, closable=true) => `<div class="sheet-h left"><span class="title">${title}</span>${closable?`<button data-act="closeOv" aria-label="Close">${svg('close')}</button>`:''}</div>`;
+  if (o.t === 'actions') return `<div class="dim" data-act="closeOv"></div><div class="iosas${still}"><div class="grp">${o.title?`<div class="ast">${esc(o.title)}</div>`:''}${o.actions.map((a,i)=>`<div class="ai ${a.red?'red':''}" data-act="ovAction" data-i="${i}">${esc(a.label)}</div>`).join('')}</div><div class="grp"><div class="ai cancel" data-act="closeOv">Cancel</div></div></div>`;
+  if (o.t === 'confirm') return `<div class="dim" data-act="closeOv"></div><div class="alert${still}"><div class="at">${esc(o.title)}</div><div class="am">${o.text}</div><div class="ab"><div data-act="closeOv">Cancel</div><div class="${o.red?'red':'pri'}" data-act="ovConfirm">${esc(o.ok)}</div></div></div>`;
+  if (o.t === 'input') return `<div class="dim" data-act="closeOv"></div><div class="alert${still}"><div class="at">${esc(o.title)}</div><div class="am"><input id="ovInput" class="ovinput" value="${esc(o.value||'')}" placeholder="${esc(o.ph||'')}" maxlength="60"></div><div class="ab"><div data-act="closeOv">Cancel</div><div class="pri" data-act="ovInputOk">Save</div></div></div>`;
+  if (o.t === 'info') return sheet(head(o.title, false) + `<div class="info-ill"><div class="box">${svg('folder','s')}${esc(o.newName)}</div><div class="box g">${svg('inbox','s blue')}${esc(genName(o.pid))}</div></div><div class="info-txt">${o.text}</div><div class="btnrow"><div class="bigbtn" data-act="closeOv">Got it</div></div>`);
+  if (o.t === 'ancestors'){ const p = pathOf(topV().id); return `<div class="dim light" data-act="closeOv"></div><div class="menu${still}"><div class="mi" data-act="ancJump" data-id="__projects" style="color:#666">${svg('folder','gray')}All projects</div>${p.map((x,i)=>`<div class="mi ${i===p.length-1?'cur':''}" data-act="ancJump" data-id="${x}" style="padding-left:${14+i*16}px">${svg(isGen(x)?'inbox':'folder')}<span style="flex:1">${esc(nameOf(x))}</span>${i===p.length-1?svg('check','blue'):''}</div>`).join('')}</div>`; }
+  if (o.t === 'autosave'){ const as = DB.autosave; return sheet(head('Auto save to Teamspace') + `<div class="opts"><div class="opt" data-act="asToggle"><div style="flex:1"><div class="t">Auto save</div><div class="m">Photos taken with the camera upload to ${esc(DB.team)}</div></div><span class="switch ${as.on?'on':''}"><i></i></span></div><div class="opt" data-act="asPick"><div style="flex:1"><div class="t">Save to</div><div class="m">${esc(destStr(as.target||'NONE'))}</div></div>${svg('chevR','s')}</div></div><div class="hint pad16" style="padding-top:12px">Folders with a location: photos taken there are saved into that folder automatically.</div><div style="height:12px"></div>`); }
+  if (o.t === 'docpick') return sheet(head('Upload file') + `<div class="pk-sub">Saved to ${esc(destStr(o.target))}</div>${SAMPLE_FILES.map(([n,s],i)=>`<div class="docrow" data-act="uploadDoc" data-i="${i}"><div class="fico"><span style="background:${EXT_COLOR[docExt(n)]||'#6B7280'}">${docExt(n)}</span></div><div class="main"><div class="t">${n}</div><div class="m">${s} · Files</div></div></div>`).join('')}<div style="height:12px"></div>`);
+  if (o.t === 'stepText') return `<div class="dim" data-act="closeOv"></div><div class="alert${still}"><div class="at">${esc(o.title)}</div><div class="am"><input id="ovInput" class="ovinput" value="${esc(o.value||'')}" maxlength="60"></div><div class="ab"><div data-act="closeOv">Cancel</div><div class="pri" data-act="stepTextOk">Done</div></div></div>`;
+  if (o.t === 'share'){ const id = topV().id; const cards = childCards(id); const cnt = shareCount(o,id); const verb = o.kind==='share'?'Share':'Download';
+    return sheet(head(verb + ' photos') + `<div class="opts"><div class="opt" data-act="shareMode" data-v="all"><span class="radio ${o.mode==='all'?'on':''}"></span><div><div class="t">All folders</div><div class="m">${plural(subtree(id,'photo').length,'photo')} in ${plural(cards.length,'folder')}</div></div></div><div class="opt" data-act="shareMode" data-v="pick"><span class="radio ${o.mode==='pick'?'on':''}"></span><div><div class="t">Choose folders</div><div class="m">Pick which folders to include</div></div></div></div>${o.mode==='pick'?`<div class="picklist">${cards.map(c=>{ const n=(c.gen?own(id,'photo'):subtree(c.id,'photo')).length; return `<div class="pick" data-act="shareToggle" data-id="${c.id}"><span class="cb ${o.sel.includes(c.id)?'on':''}">${o.sel.includes(c.id)?svg('check','s white'):''}</span><span style="flex:1">${esc(nameOf(c.id))}</span><span class="n">${n}</span></div>`; }).join('')}</div>`:''}<div class="btnrow"><div class="bigbtn ${cnt?'':'dis'}" data-act="shareGo">${verb} ${plural(cnt,'photo')}</div></div>`); }
+  if (o.t === 'shareTo') return sheet(`<div class="sheet-h"><span style="width:24px"></span><span class="title">Share to</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div><div class="pk-sub" style="text-align:center">${plural(o.count,'photo')}</div><div class="appgrid">${SHARE_APPS.map(([n,c])=>`<div class="app" data-act="shareApp" data-n="${n}"><span style="background:${c}">${n==='More'?'···':n==='Copy link'?'🔗':n[0]}</span>${n}</div>`).join('')}</div><div style="height:16px"></div>`);
+  if (o.t === 'download') return sheet(head(o.pct<100?'Downloading…':'Download complete', o.pct>=100) + `<div class="prog"><i style="width:${o.pct}%"></i></div><div class="info-txt">${o.pct<100?`Saving ${plural(o.count,'photo')} to your device…`:`${plural(o.count,'photo')} saved to your device`}</div>${o.pct>=100?'<div class="btnrow"><div class="bigbtn" data-act="closeOv">Done</div></div>':'<div style="height:24px"></div>'}`);
+  if (o.t === 'uploading') return sheet(head('Uploading…', false) + `<div class="prog"><i style="width:${o.pct}%"></i></div><div class="info-txt">${o.done} of ${o.count} uploaded to ${esc(destStr(o.target))}</div><div style="height:24px"></div>`);
+  if (o.t === 'picker') return pickerHtml(o, still);
+  if (o.t === 'photoInfo'){ const p = DB.items.find(i=>i.id===topV().id); const m = member(p.by); const vid = viewOfStore(p.folder);
+    return sheet(`<div class="sheet-h"><span style="width:24px"></span><span class="title">Details</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div>
+    <div class="drow" data-act="toast" data-msg="Member profile (not in this demo)"><span class="vav sm" style="background:${m.c}">${m.ini}</span><span class="dt">${esc(m.name)}</span>${svg('chevR','s gray')}</div>
+    <div class="drow" data-act="infoGoto" data-id="${vid}">${svg('folder')}<span class="dt">${esc(pathOf(vid).map(nameOf).join(' > '))}</span>${svg('chevR','s gray')}</div>
+    <div class="drow">${svg('clock')}<span class="dt">${new Date(p.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})} · ${fmtTime(p.ts)}</span></div>
+    <div class="drow" data-act="toast" data-msg="Open in map (not in this demo)">${svg('pin')}<span class="dt ulink">${esc(addrOf(p.folder)||addrOf(projOf(p.folder))||'Current location')}</span>${svg('chevR','s gray')}</div><div style="height:18px"></div>`); }
+  if (o.t === 'delFolder') return `<div class="dim" data-act="closeOv"></div><div class="alert2${still}"><div class="at">Delete this Folder?</div><div class="an">[${esc(nameOf(o.id))}]</div><div class="am2">* ${o.text}</div><div class="ab2"><div class="b2" data-act="closeOv">Cancel</div><div class="b2 red" data-act="delFolder" data-id="${o.id}">Delete</div></div></div>`;
+  return '';
+}
+function shareCount(o, id){ const cards = childCards(id); if (o.mode === 'all') return subtree(id,'photo').length; return cards.filter(c=>o.sel.includes(c.id)).reduce((s,c)=>s + (c.gen?own(id,'photo'):subtree(c.id,'photo')).length, 0); }
+/* project / folder selector — styled after "Auto save to Teamspace · Select a project"
+   purpose: moveItems | moveFolder | camTarget | uploadTarget | autosave | execTarget */
+const pkStart = id => { if (!id || id === 'NONE' || !exists(id)) return 'ROOT'; const p = projOf(id); if (!isCont(p)) return 'ROOT'; const st = store(id); return isCont(st) ? st : (isProj(st) ? 'ROOT' : DB.folders[st].parent); };
+function treeHtml(o, still){
+  const P = o.purpose, isFM = P === 'moveFolder', q = (o.q||'').trim().toLowerCase();
+  const blocked = isFM ? new Set([o.fid, ...desc(o.fid)]) : new Set();
+  const src = P === 'moveItems' ? new Set(DB.items.filter(i=>o.ids.includes(i.id)).map(i=>i.folder)) : new Set();
+  const cur = isFM ? DB.folders[o.fid].parent : (src.size===1 ? [...src][0] : null);
+  const rows = [];
+  const row = (id, depth, opts) => { const on = !opts.hdr && o.sel === id;
+    rows.push(`<div class="trow ${opts.dis?'dis2':''} ${opts.hdr?'hdr2':''}" data-act="${opts.dis||opts.hdr?'noop':'pkPick'}" data-id="${id}" style="padding-left:${16+depth*20}px"><span class="sico ${opts.proj?'':'fold'}">${opts.thumb!=null?`<i style="background:${phColor(opts.thumb)}"></i>`:svg(opts.proj?'image':(opts.gen?'inbox':'folder'),'s')}</span><div class="main"><div class="t">${esc(opts.label||nameOf(id))}</div>${opts.sub?`<div class="m">${opts.sub}</div>`:''}</div>${on?svg('check','blue'):''}</div>`); };
+  const node = (id, depth) => { const proj = isProj(id), cont = isCont(id);
+    if (isFM){ if (blocked.has(id)) return; const tooDeep = !proj && depthOf(id) + 1 + heightOf(o.fid) > MAX_DEPTH;
+      row(id, depth, {proj, dis:tooDeep, sub: tooDeep ? 'Max 3 levels' : (cur===id ? 'Current location' : '')}); kids(id,'name').forEach(k => node(k.id, depth+1)); return; }
+    if (cont){ row(id, depth, {proj, hdr:true}); row(id, depth+1, {gen:true, label:genName(id), thumb:coverHue(own(id)), sub: cur===id ? 'Current location' : ''}); kids(id,'name').forEach(k => node(k.id, depth+1)); }
+    else row(id, depth, {proj, sub: cur===id ? 'Current location' : ''}); };
+  const match = pid => !q || [pid, ...desc(pid)].some(x => nameOf(x).toLowerCase().includes(q));
+  Object.values(DB.projects).sort((a,b)=>b.updated-a.updated).filter(p => match(p.id)).forEach(p => node(p.id, 0));
+  let ok = !!o.sel && o.sel !== cur, why = '';
+  if (o.sel && o.sel === cur) why = '';
+  return `<div class="dim" data-act="closeOv"></div><div class="sheet tall${still}"><div class="sheet-h left"><span class="title">Move to</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div><div class="search sm">${svg('search','s gray')}<input id="pkQ" placeholder="Search project" value="${esc(o.q||'')}"></div><div class="pk-body">${rows.join('') || '<div class="empty">No matching projects</div>'}</div><div class="bottombar rel"><div class="bigbtn ${ok?'':'dis'}" data-act="pkDone">Done</div></div></div>`;
+}
+const coordsOf = id => { if (!id || id === 'NONE') return null; const x = isGen(id) ? genParent(id) : id; const n = DB.projects[x] || DB.folders[x]; if (n && n.lat != null) return {lat:n.lat, lng:n.lng}; const par = parentOf(x); return par ? coordsOf(par) : null; };
+const startPos = id => coordsOf(id && id !== 'NONE' ? id : 'f1') || coordsOf('f1');
+const distM = (a, b) => { const R = 6371000, r = x => x * Math.PI / 180; const dl = r(b.lat - a.lat), dn = r(b.lng - a.lng); const h = Math.sin(dl/2)**2 + Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(h)); };
+const distStr = m => { const ft = m * 3.28084; return ft < 1000 ? Math.max(1, Math.round(ft)) + 'ft' : (m / 1609.34).toFixed(m < 16093 ? 1 : 0) + 'mi'; };
+function selectHtml(o, still){
+  const at = o.at, P = o.purpose, sel = o.sel, q = (o.q||'').trim().toLowerCase();
+  const pos = (P === 'camTarget' && S.cam) ? S.cam.pos : null;
+  const titles = {camTarget:'Auto save to Teamspace', uploadTarget:'Upload to', autosave:'Auto save to Teamspace', execTarget:'Link checklist to'};
+  const own1 = (P === 'camTarget' || P === 'autosave');
+  const thumb = id => { const h = coverHue(id === 'NONE' ? [] : subtree(id)); return h === null ? `<span class="pth empty">${svg('folder','s')}</span>` : `<span class="pth" style="background:${phColor(h)}"></span>`; };
+  const near = id => { const c = pos && coordsOf(id); const n = isGen(id) ? null : (DB.projects[id] || DB.folders[id]); if (!c || !n || n.lat == null) return null; const m = distM(pos, c); return m < 1609 ? m : null; };
+  const row = (id, o2) => { const isSel = !o2.drill && sel === id; const d = o2.nod ? null : o2.drill ? near(o2.drill) : near(id);
+    const sub = o2.sub ? `<div class="m">${o2.sub}</div>` : (d != null ? `<div class="m pdist">${svg('pin','s blue')}${distStr(d)}</div>` : '');
+    return `<div class="prow2 ${isSel?'on':''}" data-act="${o2.drill?'pkDrill':'pkPick'}" data-id="${o2.drill||id}">${o2.icon||thumb(id)}<div class="main"><div class="t">${esc(o2.label||nameOf(id))}</div>${sub}</div>${isSel?svg('check','blue'):''}${o2.drill?svg('chevR','s gray'):''}</div>`; };
+  const nodeRow = id => isCont(id) ? row(id, {drill:id}) : row(id, {});
+  let body = '';
+  if (q){
+    const hits = [...Object.keys(DB.projects), ...Object.keys(DB.folders)].filter(id => nameOf(id).toLowerCase().includes(q));
+    body = hits.map(id => isCont(id) ? row(id, {drill:id, sub:esc(pathOf(id).slice(0,-1).map(nameOf).join(' › '))}) : row(id, {sub:esc(pathOf(id).slice(0,-1).map(nameOf).join(' › '))})).join('') || '<div class="empty">No results</div>';
+  } else if (at === 'ROOT'){
+    body = `<div class="plabel">Select a project</div>`;
+    if (own1) body += `<div class="prow2" data-act="newProjectFromPicker"><span class="pth plus">${svg('plus','blue')}</span><div class="main"><div class="t">Create project</div></div></div>`;
+    let projs = Object.values(DB.projects).sort((a,b) => b.updated - a.updated).map(p => p.id);
+    const selProj = sel && sel !== 'NONE' && exists(sel) ? projOf(sel) : null; if (selProj) projs = [selProj, ...projs.filter(x => x !== selProj)];
+    body += projs.slice(0,1).map(nodeRow).join('');
+    if (own1) body += row('NONE', {icon:`<span class="pth nop">${svg('image')}</span>`, label:'No Project', sub:'Save in All Photos'});
+    body += projs.slice(1).map(nodeRow).join('');
+  } else {
+    body = `<div class="plabel">${pathOf(at).map(x=>esc(nameOf(x))).join(' › ')}</div>`;
+    const gh = coverHue(own(at));
+    body += row(at, {nod:true, label:genName(at), icon: gh===null ? `<span class="pth gen">${svg('inbox','white')}</span>` : `<span class="pth" style="background:${phColor(gh)}"></span>`});
+    body += kids(at,'name').map(k => nodeRow(k.id)).join('');
+  }
+  return `<div class="dim" data-act="closeOv"></div><div class="sheet sel2${still}"><div class="s2h">${at!=='ROOT'&&!q?`<button data-act="pkUp" aria-label="Back">${svg('chevL')}</button>`:''}<span class="title">${titles[P]}</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div><div class="search s2s">${svg('search','s gray')}<input id="pkQ" placeholder="Search" value="${esc(o.q||'')}"></div><div class="pk-body">${body}</div><div class="s2done"><div class="bigbtn ${sel?'':'dis'}" data-act="pkDone">Done</div></div></div>`;
+}
+function pickerHtml(o, still){
+  if (o.purpose === 'moveItems' || o.purpose === 'moveFolder') return treeHtml(o, still);
+  return selectHtml(o, still);
+  const at = o.at, P = o.purpose, isFM = P === 'moveFolder';
+  const titles = {moveItems:`Move ${plural(o.ids?o.ids.length:0, o.noun||'item')}`, moveFolder:`Move "${o.fid?esc(nameOf(o.fid)):''}"`, camTarget:'Auto save to Teamspace', uploadTarget:'Upload to', autosave:'Auto save to Teamspace', execTarget:'Link checklist to'};
+  const src = P === 'moveItems' ? new Set(DB.items.filter(i=>o.ids.includes(i.id)).map(i=>i.folder)) : new Set();
+  const blocked = isFM ? new Set([o.fid, ...desc(o.fid)]) : new Set();
+  const sel = o.sel;
+  const selPath = sel && sel !== 'NONE' && exists(sel) ? pathOf(sel) : [];
+  const rowHtml = (id, opts) => { const isSel = sel === id && !opts.drillRow; const act = opts.dis ? 'noop' : opts.drillRow ? 'pkDrill' : 'pkPick';
+    const inside = opts.drillRow && selPath.includes(id) ? `<div class="m blue">Selected: ${esc(nameOf(viewOfStore(sel)))}</div>` : '';
+    return `<div class="selrow ${opts.dis?'dis2':''} ${isSel?'on':''}" data-act="${act}" data-id="${id}"><span class="sico ${opts.gen?'gen':''}">${svg(opts.icon||'folder', opts.gen?'s white':'s')}</span><div class="main"><div class="t">${esc(opts.label||nameOf(id))}${opts.gen?'<span class="defchip">Default</span>':''}</div>${opts.sub?`<div class="m">${opts.sub}</div>`:''}${inside}</div>${opts.cur?'<span class="curtag">Current</span>':''}${isSel?svg('check','blue'):''}${opts.drillRow?`<span class="chev">${svg('chevR','s')}</span>`:''}${opts.drill?`<span class="drill" data-act="pkDrill" data-id="${opts.drill}" aria-label="Open">${svg('chevR','s')}</span>`:''}</div>`; };
+  const curOf = id => src.size===1 && src.has(id);
+  let rows = '';
+  if (at === 'ROOT'){
+    rows += `<div class="pk-sub">Select a project</div>`;
+    if (P === 'autosave' || P === 'camTarget') rows += `<div class="selrow" data-act="newProjectFromPicker"><span class="sico plus">${svg('plus','s blue')}</span><div class="main"><div class="t">Create Project</div></div></div>` + rowHtml('NONE', {icon:'image', label:'No project'});
+    rows += Object.values(DB.projects).sort((a,b)=>b.updated-a.updated).map(p => { const n = isCont(p.id) ? plural(childCards(p.id).length,'folder') : '';
+      return isFM ? rowHtml(p.id, {sub:n, drill:p.id}) : isCont(p.id) ? rowHtml(p.id, {sub:n, drillRow:true}) : rowHtml(p.id, {cur:curOf(p.id)}); }).join('');
+  } else {
+    rows += `<div class="pk-sub">Select a folder in ${esc(nameOf(at))}</div>`;
+    if (isFM){
+      rows += rowHtml(at, {label:`Directly in ${nameOf(at)}`, icon:'folder'});
+      rows += kids(at).map(k => rowHtml(k.id, {dis: blocked.has(k.id), sub: blocked.has(k.id)?'The folder you are moving':(isCont(k.id)?plural(childCards(k.id).length,'folder'):''), drill: blocked.has(k.id)?null:k.id})).join('');
+    } else {
+      rows += rowHtml(at, {gen:true, icon:'inbox', label:genName(at), sub:'Not in a folder', cur:curOf(at)});
+      rows += kids(at).map(k => { const sub = (addrOf(k.id)?esc(addrOf(k.id))+' · ':'') + (isCont(k.id)?plural(childCards(k.id).length,'folder'):itemsWord(subtree(k.id)));
+        return isCont(k.id) ? rowHtml(k.id, {sub, drillRow:true}) : rowHtml(k.id, {sub, cur:curOf(k.id)}); }).join('');
+    }
+  }
+  const crumbs = at === 'ROOT' ? '' : `<div class="pkcrumb"><span data-act="pkDrill" data-id="ROOT" class="pkc">All projects</span>${pathOf(at).map((x,i,a)=> ` <span class="sep">›</span> ` + (i===a.length-1?`<b>${esc(nameOf(x))}</b>`:`<span data-act="pkDrill" data-id="${x}" class="pkc">${esc(nameOf(x))}</span>`)).join('')}</div>`;
+  let ok = !!sel, why = '';
+  if (sel && isFM){ const f = DB.folders[o.fid]; if (sel === f.parent){ ok = false; why = 'Already here'; } else if (blocked.has(sel)){ ok = false; } else if (depthOf(sel) + 1 + heightOf(o.fid) > MAX_DEPTH){ ok = false; why = 'Max 3 levels'; } }
+  if (sel && P === 'moveItems' && src.size === 1 && src.has(sel)){ ok = false; why = 'Already here'; }
+  return `<div class="dim" data-act="closeOv"></div><div class="sheet tall${still}"><div class="sheet-h left">${at!=='ROOT'?`<button data-act="pkUp" aria-label="Back">${svg('back')}</button>`:''}<span class="title">${titles[P]}</span><button data-act="closeOv" aria-label="Close">${svg('close')}</button></div>${crumbs}<div class="pk-body">${rows}</div><div class="bottombar rel"><div class="bigbtn ${ok?'':'dis'}" data-act="pkDone">${why || 'Done'}</div></div></div>`;
+}
+function selBar(){ const s = S.select, n = s.ids.size;
+  const ops = s.kind === 'photo' ? [['link','Link','','selShare'],['PDF','PDF','#E5484D','selExport'],['ZIP','ZIP','#C8A200','selZip'],['Excel','Excel','#1E9E5A','selExport'],['KMZ','KMZ','#3A7BD5','selExport'],['move','Move','','selMove'],['trash','Delete','','selDelete']] : [['move','Move','','selMove'],['trash','Delete','','selDelete']];
+  return `<div class="selpanel"><div class="spt">${n} item${n===1?'':'s'} selected</div><div class="spg">${ops.map(([ic,l,c,a])=>`<div class="spb ${n?'':'dis'}" data-act="${a}" data-f="${l}"><span class="spi">${c?`<b style="color:${c}">${l}</b>`:svg(ic, ic==='trash'?'red':'blue')}</span>${l}</div>`).join('')}</div></div>`; }
+function tabBar(){ if (stack().length !== 1 || S.select) return '';
+  return `<div class="tabbar">${[['library','Library','home'],['tools','Tools','grid'],['search','Search','search'],['settings','Settings','gear']].map(([k,l,i])=>`<div class="tb ${S.tab===k?'on':''}" data-act="switchTab" data-tab="${k}">${svg(i, S.tab===k?'blue':'')}<span>${l}</span></div>`).join('')}</div>`; }
+
+/* ---------------- render ---------------- */
+let toastTimer;
+function toast(msg){ clearTimeout(toastTimer); document.querySelectorAll('.toast').forEach(t=>t.remove()); const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.getElementById('device').appendChild(el); toastTimer = setTimeout(()=>el.remove(), 2800); }
+function render(keep){
+  const sc = document.getElementById('screen'); const y = sc.scrollTop; const v = topV();
+  const map = {projSettings:projSettingsScreen, home:homeScreen, projects:projectsScreen, newProject:newProjectScreen, node:nodeScreen, folders:foldersScreen, folderForm:folderFormScreen, allPhotos:allPhotosScreen, photo:photoScreen, camera:cameraScreen, upload:uploadScreen, tpl:tplScreen, clCreate:clCreateScreen, clExec:clExecScreen, doc:docScreen, search:searchScreen, tools:toolsScreen, settings:settingsScreen};
+  sc.innerHTML = (map[v.t] || homeScreen)(v);
+  if (v.t === 'folders') document.getElementById('fRows').innerHTML = folderRows(v);
+  const dark = v.t === 'photo';
+  sc.className = 'screen' + (tabBar() ? ' withtabs' : '') + (dark ? ' dark' : '') + (v.t==='camera'?' cam':'');
+  let layer = '';
+  if (v.t === 'node' && exists(v.id)){ const cont = isCont(v.id); const tab = v.tab || 'photos';
+    if (S.select) layer += selBar();
+    else if (cont || tab === 'photos') layer += `<div class="fab up" data-act="uploadOpen" aria-label="Upload">${svg('imgPlus','blue')}</div><div class="fab cam" data-act="cameraOpen" aria-label="Camera">${svg('camera','white big')}</div>`;
+    else if (tab === 'checklists') layer += `<div class="fab cam" data-act="clCreate" aria-label="New checklist">${svg('clip','white big')}</div>`;
+    else layer += `<div class="fab cam" data-act="docPick" aria-label="Upload file">${svg('docPlus','white big')}</div>`; }
+  if (v.t === 'home') layer += `<div class="fab cam home" data-act="cameraOpenHome" aria-label="Camera">${svg('camera','white big')}</div>`;
+  layer += tabBar() + overlayHtml(); S.justOpened = false;
+  document.getElementById('layer').innerHTML = layer;
+  document.getElementById('status').className = 'status' + (dark ? ' dark' : '');
+  document.getElementById('homebar').className = 'homebar' + (dark ? ' light' : '');
+  const gc = document.getElementById('geoCard'); if (gc){ gc.innerHTML = v.t==='camera' ? geoCard() : ''; gc.style.display = v.t==='camera' ? '' : 'none'; }
+  sc.scrollTop = keep ? y : 0; bind(); explain(); S.flash = null;
+}
+function bind(){
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.oninput = fn; return el; };
+  const refocus = (id, pos) => { const n = document.getElementById(id); if (n){ n.focus(); n.setSelectionRange(pos,pos); } };
+  on('qProjects', e => { S.q.projects = e.target.value; const pos = e.target.selectionStart; render(true); refocus('qProjects', pos); });
+  on('qFolders', e => { S.q.folders = e.target.value; document.getElementById('fRows').innerHTML = folderRows(topV()); });
+  on('qSearch', e => { S.q.search = e.target.value; const pos = e.target.selectionStart; render(true); refocus('qSearch', pos); });
+  const nm = on('fName', e => { topV().name = e.target.value; const b = document.getElementById('doneBtn'); if (b) b.className = 'bigbtn ' + (e.target.value.trim() ? '' : 'dis'); });
+  on('pkQ', e => { S.ov.q = e.target.value; const pos = e.target.selectionStart; render(true); refocus('pkQ', pos); });
+  if (nm && !topV().name && !topV().focused){ topV().focused = true; setTimeout(()=>nm.focus(), 60); }
+  const oi = document.getElementById('ovInput'); if (oi){ if (S.ov && !S.ov.focused){ S.ov.focused = true; setTimeout(()=>{ oi.focus(); oi.select(); }, 60); } oi.oninput = e => { S.ov.value = e.target.value; }; oi.onkeydown = e => { if (e.key === 'Enter') act(S.ov.t === 'stepText' ? 'stepTextOk' : 'ovInputOk', {}); }; }
+}
+
+/* ---------------- actions ---------------- */
+function openNode(id){ push({t:'node', id, tab:'photos'}); }
+function gotoNode(id){ const p = pathOf(id); S.stacks[S.tab] = [S.tab==='library'?{t:'home'}:{t:S.tab}, ...(S.tab==='library'?[{t:'projects'}]:[]), ...p.map(x=>({t:'node', id:x, tab:'photos'}))]; }
+function purge(){ Object.keys(S.stacks).forEach(t => S.stacks[t] = S.stacks[t].filter(x => !(x.id && (x.t==='node'||x.t==='folders'||x.t==='projSettings'||(x.t==='folderForm'&&x.mode!=='new')) && !exists(x.id)) && !(x.t==='tpl' && !exists(x.node)))); }
+function act(a, d){
+  d = d || {}; const v = topV(); let keep = false;
+  switch (a){
+    case 'noop': return;
+    case 'back': if (S.ov){ S.ov = null; break; } if (S.select){ S.select = null; break; } pop(); break;
+    case 'switchTab': S.tab = d.tab; S.ov = null; S.select = null; break;
+    case 'go': if (d.v === 'searchTab'){ S.tab = 'search'; break; } if (d.v === 'folders'){ S.q.folders=''; push({t:'folders', id:v.id}); break; } push({t:d.v}); break;
+    case 'open': openNode(d.id); break;
+    case 'goto': gotoNode(d.id); break;
+    case 'tab': v.tab = d.tab; S.select = null; keep = true; break;
+    case 'toast': toast(d.msg); return;
+    case 'tryQ': S.q.search = d.q; break;
+    case 'clearQ': S.q.search = ''; break;
+    /* projects */
+    case 'newProject': push({t:'newProject', name:'', addr:''}); break;
+    case 'newProjectFromPicker': S.ov = null; push({t:'newProject', name:'', addr:''}); break;
+    case 'locAsk': openOv({t:'input', title:'Location', value:v.addr||'', ph:'Street address or coordinates', onOk:{act:'setFormAddr', arg:{}}}); keep = true; break;
+    case 'setFormAddr': v.addr = (d.value||'').trim(); keep = true; break;
+    case 'pickAddr': v.addr = d.a; keep = true; break;
+    case 'saveProject': { const name = (v.name||'').trim(); if (!name){ toast('Enter a project name'); return; } const pr = DB.projects[v.id]; pr.name = name; pr.address = (v.addr||'').trim(); pr.updated = Date.now(); save(); pop(); toast('Project updated'); break; }
+    case 'createProject': { const name = (v.name||'').trim(); if (!name){ toast('Enter a project name'); return; } const id = nid('p'); DB.projects[id] = {id, name, address:(v.addr||'').trim(), updated:Date.now()}; save(); S.ov = null; S.tab = 'library'; S.stacks.library = [{t:'home'}, {t:'node', id, tab:'photos'}]; toast(`Project "${name}" created`); break; }
+    case 'projMenu': openOv({t:'actions', title:DB.projects[d.id].name, actions:[{label:'Rename', act:'renameAsk', arg:{id:d.id}},{label:'Delete project', red:true, act:'delProjAsk', arg:{id:d.id}}]}); keep = true; break;
+    case 'delProjAsk': { const p = DB.projects[d.id]; openOv({t:'confirm', title:`Delete "${p.name}"?`, text:`All ${itemsWord(subtree(d.id))} and folders in this project will be deleted.`, ok:'Delete', red:true, onOk:{act:'delProj', arg:{id:d.id}}}); keep = true; break; }
+    case 'delProj': { const id = d.id; const set = new Set([id, ...desc(id)]); DB.items = DB.items.filter(i=>!set.has(i.folder)); desc(id).forEach(f=>delete DB.folders[f]); delete DB.projects[id]; Object.keys(DB.gen).forEach(k=>{ if (!exists(k)) delete DB.gen[k]; }); if (DB.autosave.target && !exists(DB.autosave.target)) DB.autosave.target = 'NONE'; save(); purge(); toast('Project deleted'); keep = true; break; }
+    /* node / folder */
+    case 'nodeMenu': { const id = v.id; let actions;
+      if (isProj(id)){ push({t:'projSettings', id, name:DB.projects[id].name, addr:DB.projects[id].address}); break; }
+      else if (isGen(id)) actions = [{label:'Rename', act:'renameAsk', arg:{id}}];
+      else actions = [{label:'Edit folder', act:'editFolder', arg:{id}},{label:'Move folder', act:'moveFolderOpen', arg:{id}},{label:'Delete folder', red:true, act:'delFolderAsk', arg:{id}}];
+      openOv({t:'actions', title:nameOf(id), actions}); keep = true; break; }
+    case 'folderMenu': openOv({t:'actions', title:nameOf(d.id), actions:[{label:'Edit folder', act:'editFolder', arg:{id:d.id}},{label:'Move folder', act:'moveFolderOpen', arg:{id:d.id}},{label:'Delete folder', red:true, act:'delFolderAsk', arg:{id:d.id}}]}); keep = true; break;
+    case 'renameAsk': openOv({t:'input', title: isGen(d.id)?'Rename default folder':'Rename', value:nameOf(d.id), onOk:{act:'rename', arg:{id:d.id}}}); keep = true; break;
+    case 'rename': { const nv = (d.value||'').trim(); if (!nv) return; if (isGen(d.id)) DB.gen[genParent(d.id)] = nv; else if (isProj(d.id)) DB.projects[d.id].name = nv; else DB.folders[d.id].name = nv; save(); toast(`Renamed to "${nv}"`); keep = true; break; }
+    case 'addrAsk': openOv({t:'input', title:'Project location', value:addrOf(d.id), ph:'Street address or coordinates', onOk:{act:'setAddr', arg:{id:d.id}}}); keep = true; break;
+    case 'setAddr': DB.projects[d.id].address = (d.value||'').trim(); save(); toast('Location updated'); keep = true; break;
+    case 'newFolder': { const p = store(v.id); if (depthOf(p) >= MAX_DEPTH){ toast('Folders can be nested up to 3 levels'); return; } push({t:'folderForm', mode:'new', parent:p, name:'', addr:''}); break; }
+    case 'editFolder': push({t:'folderForm', mode:'edit', id:d.id, name:DB.folders[d.id].name, addr:DB.folders[d.id].address}); break;
+    case 'saveFolder': { const name = (v.name||'').trim(); if (!name){ toast('Enter a folder name'); return; }
+      if (v.mode === 'edit'){ const f = DB.folders[v.id]; f.name = name; f.address = (v.addr||'').trim(); touch(f.id); save(); pop(); toast('Folder updated'); break; }
+      const p = v.parent; const conv = !isCont(p) && own(p).length > 0; const n = own(p).length; const id = nid('f');
+      DB.folders[id] = {id, name, parent:p, address:(v.addr||'').trim(), updated:Date.now()}; touch(id); save(); pop();
+      toast(`Folder "${name}" created`); break; }
+    case 'delFolderAsk': { const id = d.id; const par = DB.folders[id].parent; const last = kids(par).length === 1; const n = subtree(id).length; const subs = desc(id).length;
+      const dest = esc(last ? nameOf(par) : nameOf(par) + ' › ' + genName(par));
+      const text = !n ? (subs ? `This folder and its ${plural(subs,'subfolder')} are empty.` : 'This folder is empty.')
+        : `${subs ? `Its ${plural(subs,'subfolder')} will be removed too. ` : ''}All items won’t be deleted, they’ll stay in <b>${dest}</b>.`;
+      openOv({t:'delFolder', id, text}); keep = true; break; }
+    case 'delFolder': { S.ov = null; const id = d.id; const par = DB.folders[id].parent; const set = new Set([id, ...desc(id)]); const n = subtree(id).length; DB.items.forEach(i=>{ if (set.has(i.folder)) i.folder = par; }); set.forEach(f=>{ delete DB.folders[f]; delete DB.gen[f]; }); if (DB.autosave.target && set.has(DB.autosave.target)) DB.autosave.target = par; touch(par); save(); purge();
+      toast(n ? `Folder deleted. ${plural(n,'item')} moved to ${isCont(par) ? nameOf(par) + ' › ' + genName(par) : nameOf(par)}` : 'Folder deleted'); break; }
+    case 'moveFolderOpen': openOv({t:'picker', purpose:'moveFolder', fid:d.id, at:projOf(d.id), sel:DB.folders[d.id].parent}); keep = true; break;
+    case 'infoGoto': S.ov = null; gotoNode(d.id); break;
+    case 'ancestors': openOv({t:'ancestors'}); keep = true; break;
+    case 'ancJump': S.ov = null; if (d.id === '__projects'){ S.stacks[S.tab] = S.tab==='library' ? [{t:'home'},{t:'projects'}] : [{t:S.tab}]; break; } gotoNode(d.id); break;
+    case 'sortFolders': S.folderSort = {recent:'old', old:'name', name:'recent'}[S.folderSort]; keep = true; break;
+    /* overlay plumbing */
+    case 'closeOv': S.ov = null; keep = true; break;
+    case 'ovAction': { const x = S.ov.actions[+d.i]; S.ov = null; act(x.act, Object.assign({}, x.arg)); return; }
+    case 'ovConfirm': { const x = S.ov.onOk; S.ov = null; act(x.act, Object.assign({}, x.arg)); return; }
+    case 'ovInputOk': { const x = S.ov.onOk; const val = S.ov.value; S.ov = null; act(x.act, Object.assign({value:val}, x.arg)); return; }
+    /* photos */
+    case 'photoTap': if (S.select){ const ids = S.select.ids; ids.has(d.id) ? ids.delete(d.id) : ids.add(d.id); keep = true; break; } push({t:'photo', id:d.id, ctx:d.ctx}); break;
+    case 'viewerNav': { const ids = (CTX[v.ctx]||[]).filter(id=>DB.items.some(i=>i.id===id)); const i = ids.indexOf(v.id) + (+d.d); if (ids[i]) v.id = ids[i]; break; }
+    case 'photoInfo': openOv({t:'photoInfo'}); keep = true; break;
+    case 'photoShare': openOv({t:'shareTo', count:1}); keep = true; break;
+    case 'photoDownload': startDownload(1); keep = true; break;
+    case 'photoMove': openOv({t:'picker', purpose:'moveItems', noun:'photo', ids:[v.id], at:pkStart(DB.items.find(i=>i.id===v.id).folder), sel:DB.items.find(i=>i.id===v.id).folder}); keep = true; break;
+    case 'photoDelete': openOv({t:'confirm', title:'Delete this photo?', text:'This can\'t be undone.', ok:'Delete', red:true, onOk:{act:'delItems', arg:{ids:[v.id]}}}); keep = true; break;
+    case 'delItems': { const ids = new Set(d.ids); const n = ids.size; DB.items = DB.items.filter(i=>!ids.has(i.id)); save(); if (S.select) S.select = null;
+      if (v.t === 'photo'){ const left = (CTX[v.ctx]||[]).filter(id=>DB.items.some(i=>i.id===id)); if (!left.length) pop(); else if (!left.includes(v.id)) v.id = left[0]; }
+      if (v.t === 'doc') pop(); toast(`Deleted ${n} item${n>1?'s':''}`); keep = v.t==='node'||v.t==='tpl'; break; }
+    case 'selStart': { const tb = v.tab || 'photos'; S.select = {ids:new Set(), kind: tb==='photos'?'photo':tb==='checklists'?'tpl':'doc'}; keep = true; break; }
+    case 'selToggle': { const ids = S.select.ids; ids.has(d.id) ? ids.delete(d.id) : ids.add(d.id); keep = true; break; }
+    case 'selExport': if (!S.select.ids.size) return; toast(`${d.f} of ${plural(S.select.ids.size,'photo')} (not in this demo)`); return;
+    case 'selZip': if (!S.select.ids.size) return; startDownload(S.select.ids.size); keep = true; break;
+    case 'selCancel': S.select = null; keep = true; break;
+    case 'selAll': { const ids = CTX['node:'+v.id]||[]; const allOn = ids.every(id=>S.select.ids.has(id)); ids.forEach(id=> allOn ? S.select.ids.delete(id) : S.select.ids.add(id)); keep = true; break; }
+    case 'selDay': { if (!S.select) S.select = {ids:new Set()}; const ids = (CTX[d.ctx]||[]).filter(id=>{ const p = DB.items.find(i=>i.id===id); return p && dayKey(p.ts)===d.k; }); const allOn = ids.every(id=>S.select.ids.has(id)); ids.forEach(id=> allOn ? S.select.ids.delete(id) : S.select.ids.add(id)); keep = true; break; }
+    case 'selShare': if (!S.select.ids.size) return; openOv({t:'shareTo', count:S.select.ids.size}); keep = true; break;
+    case 'selDownload': if (!S.select.ids.size) return; startDownload(S.select.ids.size); keep = true; break;
+    case 'selMove': { if (!S.select.ids.size) return; const ids = selItemIds(v); openOv({t:'picker', purpose:'moveItems', noun:selNoun(), ids, at:pkStart(store(v.id)), sel:store(v.id)}); keep = true; break; }
+    case 'selDelete': { if (!S.select.ids.size) return; const ids = selItemIds(v); openOv({t:'confirm', title:`Delete ${plural(ids.length, selNoun())}?`, text:'This can\'t be undone.', ok:'Delete', red:true, onOk:{act:'delItems', arg:{ids}}}); keep = true; break; }
+    /* share / download */
+    case 'shareOpen': openOv({t:'share', kind:d.kind, mode:'all', sel:childCards(v.id).map(c=>c.id)}); keep = true; break;
+    case 'shareMode': S.ov.mode = d.v; keep = true; break;
+    case 'shareToggle': { const s = S.ov.sel; const i = s.indexOf(d.id); i>=0 ? s.splice(i,1) : s.push(d.id); keep = true; break; }
+    case 'shareGo': { const o = S.ov; const cnt = shareCount(o, v.id); if (!cnt) return; if (o.kind === 'share') openOv({t:'shareTo', count:cnt}); else startDownload(cnt); keep = true; break; }
+    case 'leafShare': { const n = viewItems(v.id,'photo').length; if (!n){ toast('No photos here yet'); return; } if (d.kind === 'share') openOv({t:'shareTo', count:n}); else startDownload(n); keep = true; break; }
+    case 'searchShare': openOv({t:'shareTo', count:(CTX.search||[]).length}); keep = true; break;
+    case 'searchDownload': startDownload((CTX.search||[]).length); keep = true; break;
+    case 'shareApp': { S.ov = null; if (S.select) S.select = null; if (d.n === 'Copy link'){ try { navigator.clipboard && navigator.clipboard.writeText('https://example.com/s/' + Math.random().toString(36).slice(2,8)); } catch(e){} toast('Link copied'); } else toast(`Shared via ${d.n} (demo)`); keep = true; break; }
+    /* camera */
+    case 'cameraOpen': S.cam = {target: store(v.id), shots:0, banner:null, saved:{}, pos:startPos(store(v.id))}; push({t:'camera'}); break;
+    case 'cameraOpenHome': { const t0 = DB.autosave.target && exists(DB.autosave.target) ? DB.autosave.target : 'NONE'; S.cam = {target:t0, shots:0, banner:null, saved:{}, pos:startPos(t0)}; push({t:'camera'}); break; }
+    case 'camTarget': openOv({t:'picker', purpose:'camTarget', at: pkStart(S.cam.target), sel:S.cam.target}); keep = true; break;
+    case 'camGeo': { const c = S.cam; const pr = projOf(c.target); if (d.id === '__none'){ const b = coordsOf(pr === 'NONE' ? 'f1' : pr); c.pos = b ? {lat:b.lat + 0.05, lng:b.lng + 0.05} : null; } else c.pos = coordsOf(d.id);
+      if (d.id === '__none'){ c.banner = pr === 'NONE' ? 'No folder location matched' : `No folder location matched — saving to "${esc(destStr(pr))}"`; if (pr !== 'NONE') c.target = pr; }
+      else if (isProj(d.id)){ c.target = d.id; c.banner = `At the project location — saving to "${esc(destStr(d.id))}"`; }
+      else { c.target = d.id; c.banner = `You're at ${esc(addrOf(d.id))} — switched to "${esc(destStr(d.id))}"`; } keep = true; break; }
+    case 'shoot': { const c = S.cam; if (c.target === 'NONE'){ toast('Saved to your phone only (No project)'); c.shots++; c.last = (c.shots*53+200)%360; keep = true; break; }
+      const hue = (c.shots * 53 + 200) % 360; const id = nid('i'); DB.items.push({id, type:'photo', folder:c.target, ts:Date.now(), by:DB.me, hue, tag:TAGS[(c.shots*7+3)%TAGS.length]}); touch(c.target); save(); c.shots++; c.last = hue; c.saved[c.target] = (c.saved[c.target]||0) + 1; c.lastTarget = c.target; c.banner = null; keep = true; break; }
+    case 'camHome': { const c = S.cam; const n = c ? Object.values(c.saved||{}).reduce((x,y)=>x+y,0) : 0; S.cam = null; S.tab = 'library'; S.stacks.library = [{t:'home'}]; if (n) toast(`Saved ${plural(n,'photo')}`); break; }
+    case 'camClose': { const c = S.cam; pop(); const keys = Object.keys(c.saved||{}); if (keys.length){ gotoNode(viewOfStore(c.lastTarget)); toast(keys.length === 1 ? `Saved ${plural(c.saved[keys[0]],'photo')} to "${destStr(keys[0])}"` : `Saved ${plural(keys.reduce((s,k)=>s+c.saved[k],0),'photo')}: ` + keys.map(k=>`${c.saved[k]} → ${nameOf(viewOfStore(k))}`).join(', ')); } S.cam = null; break; }
+    /* upload */
+    case 'uploadOpen': S.up = {target: store(v.id), sel:new Set(), album: Array.from({length:12}, (_,i)=> (i*37+15)%360)}; push({t:'upload'}); break;
+    case 'upPick': { const s = S.up.sel; const i = +d.i; s.has(i) ? s.delete(i) : s.add(i); keep = true; break; }
+    case 'upAll': { const u = S.up; if (u.sel.size === u.album.length) u.sel.clear(); else u.album.forEach((_,i)=>u.sel.add(i)); keep = true; break; }
+    case 'upTarget': openOv({t:'picker', purpose:'uploadTarget', at:pkStart(S.up.target), sel:S.up.target}); keep = true; break;
+    case 'doUpload': { const u = S.up; if (!u.sel.size){ toast('Select photos first'); return; } const list = [...u.sel]; openOv({t:'uploading', count:list.length, done:0, pct:0, target:u.target}); render(true);
+      let k = 0; const tick = () => { k++; const i = list[k-1]; DB.items.push({id:nid('i'), type:'photo', folder:u.target, ts:Date.now(), by:DB.me, hue:u.album[i], tag:TAGS[(i*5)%TAGS.length]}); S.ov.done = k; S.ov.pct = Math.round(k/list.length*100); render(true);
+        if (k < list.length) setTimeout(tick, 200); else { touch(u.target); save(); setTimeout(()=>{ S.ov = null; pop(); gotoNode(viewOfStore(u.target)); render(); toast(`Uploaded ${plural(list.length,'photo')} to "${destStr(u.target)}"`); }, 300); } };
+      setTimeout(tick, 250); return; }
+    /* autosave */
+    case 'autosaveOpen': { const t = DB.autosave.target; openOv({t:'picker', purpose:'autosave', at:pkStart(t), sel:t && exists(t) ? t : 'NONE'}); keep = true; break; }
+    case 'asToggle': DB.autosave.on = !DB.autosave.on; save(); keep = true; break;
+    case 'asPick': { const t = DB.autosave.target; openOv({t:'picker', purpose:'autosave', at: t && t !== 'NONE' && exists(t) ? projOf(t) : 'ROOT', sel:t||'NONE'}); keep = true; break; }
+    /* checklists */
+    case 'openTpl': push({t:'tpl', node:v.id, k:d.k, tab:'activity'}); break;
+    case 'tplTab': v.tab = d.tab; keep = true; break;
+    case 'clCreate': push({t:'clCreate', target:store(v.id)}); break;
+    case 'startExec': { const t = TPL[d.k]; const target = v.target; stack().pop(); push({t:'clExec', k:d.k, target, values:t.steps.map(()=>({}))}); break; }
+    case 'execTarget': openOv({t:'picker', purpose:'execTarget', at:pkStart(v.target), sel:v.target}); keep = true; break;
+    case 'execStep': { const s = TPL[v.k].steps[+d.i]; const val = v.values[+d.i];
+      if (s.k === 'photo'){ val.photos = (val.photos||[]); if (val.photos.length >= 3) val.photos = []; else val.photos.push((Date.now()/97 + val.photos.length*61) % 360 | 0); keep = true; break; }
+      openOv({t:'stepText', title:s.t, value:val.text||'', i:+d.i}); keep = true; break; }
+    case 'stepTextOk': { const i = S.ov.i; v.values[i].text = S.ov.value || ''; S.ov = null; keep = true; break; }
+    case 'submitExec': { const id = nid('i'); DB.items.push({id, type:'checklist', folder:v.target, tpl:v.k, ts:Date.now(), by:DB.me, values:v.values}); touch(v.target); save(); const tgt = v.target; pop(); gotoNode(viewOfStore(tgt)); topV().tab = 'checklists'; push({t:'tpl', node:viewOfStore(tgt), k:v.k, tab:'activity'}); toast(`Submitted to "${destStr(tgt)}"`); break; }
+    /* docs */
+    case 'docPick': openOv({t:'docpick', target:store(v.id)}); keep = true; break;
+    case 'uploadDoc': { const [n, s] = SAMPLE_FILES[+d.i]; const target = S.ov.target; DB.items.push({id:nid('i'), type:'doc', folder:target, name:n, size:s, ts:Date.now(), by:DB.me}); touch(target); save(); S.ov = null; toast(`Uploaded ${n}`); keep = true; break; }
+    case 'openDoc': push({t:'doc', id:d.id}); break;
+    case 'itemMenu': { const it = DB.items.find(i=>i.id===d.id); const actions = [];
+      if (it.type === 'doc') actions.push({label:'Rename', act:'renameItemAsk', arg:{id:it.id}});
+      actions.push({label:'Move to…', act:'moveItemOpen', arg:{id:it.id}}, {label:'Delete', red:true, act:'delItemAsk', arg:{id:it.id}});
+      openOv({t:'actions', title: it.type==='doc' ? it.name : TPL[it.tpl].name + ' · ' + member(it.by).name, actions}); keep = true; break; }
+    case 'renameItemAsk': { const it = DB.items.find(i=>i.id===d.id); openOv({t:'input', title:'Rename', value:it.name, onOk:{act:'renameItem', arg:{id:it.id}}}); keep = true; break; }
+    case 'renameItem': { const it = DB.items.find(i=>i.id===d.id); const nv = (d.value||'').trim(); if (nv){ it.name = nv; save(); toast('Renamed'); } keep = true; break; }
+    case 'moveItemOpen': { const it = DB.items.find(i=>i.id===d.id); openOv({t:'picker', purpose:'moveItems', noun: it.type==='doc'?'file':'list', ids:[it.id], at:pkStart(it.folder), sel:it.folder}); keep = true; break; }
+    case 'delItemAsk': { const it = DB.items.find(i=>i.id===d.id); openOv({t:'confirm', title:'Delete?', text:`"${esc(it.type==='doc'?it.name:TPL[it.tpl].name)}" will be deleted. This can't be undone.`, ok:'Delete', red:true, onOk:{act:'delItems', arg:{ids:[it.id]}}}); keep = true; break; }
+    /* picker */
+    case 'pkDrill': S.ov.at = d.id; keep = true; break;
+    case 'pkUp': { const at = S.ov.at; S.ov.at = isProj(at) ? 'ROOT' : parentOf(at); keep = true; break; }
+    case 'pkPick': S.ov.sel = d.id; keep = true; break;
+    case 'pkDone': finishPick(S.ov, S.ov.sel); return;
+    /* reset */
+    case 'resetAsk': openOv({t:'confirm', title:'Reset demo data?', text:'All changes will be cleared and the 4 sample projects restored.', ok:'Reset', red:true, onOk:{act:'reset', arg:{}}}); keep = true; break;
+    case 'reset': try { localStorage.removeItem(STORE_KEY); } catch(e){} DB = seed(); save(); freshUI(); toast('Demo data reset'); break;
+  }
+  render(keep);
+}
+function selItemIds(v){ const s = S.select; if (s.kind === 'tpl') return own(store(v.id),'checklist').filter(i=>s.ids.has(i.tpl)).map(i=>i.id); return [...s.ids]; }
+function selNoun(){ return {photo:'photo', tpl:'list', doc:'file'}[S.select.kind]; }
+function finishPick(o, sid){
+  if (!sid) return; const P = o.purpose;
+  if (P === 'moveItems'){ const src = new Set(DB.items.filter(i=>o.ids.includes(i.id)).map(i=>i.folder)); if (src.size===1 && src.has(sid)){ toast('Already here'); return; }
+    DB.items.forEach(i=>{ if (o.ids.includes(i.id)) i.folder = sid; }); touch(sid); save(); S.ov = null; if (S.select) S.select = null; toast(`Moved ${plural(o.ids.length, o.noun||'item')} to "${destStr(sid)}"`); render(true); return; }
+  if (P === 'moveFolder'){ const f = DB.folders[o.fid]; const target = sid; if (target === f.parent || depthOf(target) + 1 + heightOf(o.fid) > MAX_DEPTH) return; const conv = !isCont(target) && own(target).length > 0; const n = own(target).length; f.parent = target; touch(f.id); save(); S.ov = null;
+    toast(`Moved to "${pathStr(target)}"`);
+    if (topV().t === 'node' && topV().id === o.fid) gotoNode(o.fid); render(true); return; }
+  if (P === 'camTarget'){ S.cam.target = sid; S.cam.banner = null; S.ov = null; render(true); return; }
+  if (P === 'uploadTarget'){ S.up.target = sid; S.ov = null; render(true); return; }
+  if (P === 'autosave'){ DB.autosave.target = sid; save(); S.ov = null; toast(`Auto save to "${destStr(sid)}"`); render(true); return; }
+  if (P === 'execTarget'){ if (sid === 'NONE') return; topV().target = sid; S.ov = null; render(true); return; }
+}
+function startDownload(count){ if (!count){ toast('Nothing to download'); return; } openOv({t:'download', count, pct:0}); render(true); let p = 0; const tick = () => { p = Math.min(100, p + 25); if (!S.ov || S.ov.t !== 'download') return; S.ov.pct = p; if (p >= 100 && S.select) S.select = null; render(true); if (p < 100) setTimeout(tick, 250); }; setTimeout(tick, 250); }
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  if (el.classList.contains('dis') || (el.closest('.bigbtn.dis') && el.dataset.act !== 'noop')) { const a = el.dataset.act; if (a === 'saveFolder' || a === 'createProject') toast('Enter a name first'); else if (a === 'submitExec') toast('Fill in all required steps first'); return; }
+  e.stopPropagation(); act(el.dataset.act, Object.assign({}, el.dataset));
+}, true);
+
+/* ---------------- side panel ---------------- */
+function explain(){
+  const v = topV(), o = S.ov; let t = '', x = '';
+  if (o){ const m = {picker:['选择位置', S.ov && (S.ov.purpose==='moveItems'||S.ov.purpose==='moveFolder') ? '「Move to」：项目和文件夹全部展开成一棵树，打勾的是当前位置；有子文件夹的项目下面第一项是 General。移动文件夹时，自己和自己的子文件夹不出现，超过 3 层的位置置灰。' : '相机 / 上传 / 自动同步 / Checklist 关联的位置选择：先选项目，有子文件夹的项目点进去选文件夹（General 排第一）。'], delFolder:['删除文件夹','内容不删：还有其他子文件夹时进上一层的 General；删的是最后一个子文件夹时直接回到上一层（General 随之消失）。'], photoInfo:['照片 Details','显示拍摄人、所在位置（项目 > 文件夹，点击跳转）、时间、地址。'], share:['分享 / 下载 · 选范围','在有子文件夹的一层，默认包含全部文件夹，也可以只挑几个；之后进入现有的分享面板 / 下载流程。'], info:['第一次建子文件夹','原有内容自动进 General，不会丢；删光子文件夹后自动恢复。'], autosave:['自动同步','保存位置可以选到子文件夹。'], ancestors:['面包屑菜单','一步跳回任意上级。'], shareTo:['Share to','现有的分享面板。'], actions:['底部菜单','现有的 iOS 分组样式。']}[o.t]; if (m){ t = m[0]; x = m[1]; } }
+  if (!t){ const m = {home:['Teamspace 首页','现有首页样式；项目行上显示「N folders」表示这个项目已经分了子文件夹。顶部 Auto save 可以选到子文件夹。'], projects:['项目列表','现有样式：搜索、⋮ 菜单（改名 / 删除）、底部 Create。'], newProject:['新建项目','现有 Create project 样式。'], folders:['全部文件夹','General 置顶；可按最近更新 / 最久没更新 / 名称排序；按名称或地址搜索。'], folderForm:['New folder / Folder settings','名称必填；Location 可选（下面是附近地址，点一下直接用）。Folder settings 里点 Save in 可移动文件夹，右上角垃圾桶删除。建第一个子文件夹后不弹说明，直接回到上一层看到 General + 新文件夹。'], projSettings:['Project settings','项目名、地址、可见成员、SharePoint / Google Drive 绑定；右上角删除项目。'], allPhotos:['All Photos','全团队照片，标出所属项目。'], photo:['照片详情','现有 Photo Preview 样式；底部 Move 可以移到任意子文件夹，点照片下方的路径可跳到所在文件夹。'], camera:['相机','现有相机样式；底部项目选择条显示存到哪（可选到子文件夹）。在有子文件夹的一层打开，默认存进 General；用「模拟定位」演示按地址自动切换。'], upload:['选择照片上传','底部可以改上传位置。'], tpl:['Checklist 数据页','现有 Activity / Sheet 样式，只显示这个文件夹里的提交记录；每条记录可以移动到其他文件夹。'], clCreate:['新建 Checklist','现有「Start with a template」页面。'], clExec:['填写 Checklist','现有填写页样式；标题下的胶囊显示提交到哪，点开先选项目，再选文件夹。填完必填步骤后 Submit。'], doc:['文件详情','现有样式；右上角 ⋮ 可以重命名、移动、删除。'], search:['Search','现有搜索页样式；结果里增加了「项目和文件夹」，照片会标出所在文件夹。'], tools:['Tools','本 Demo 不含。'], settings:['Settings','可以重置 Demo 数据。']}[v.t];
+    if (m){ t = m[0]; x = m[1]; }
+    if (v.t === 'node' && exists(v.id)){ const id = v.id;
+      if (isCont(id)){ t = (isProj(id)?'项目':'文件夹') + ' · ' + nameOf(id) + '（有子文件夹）'; x = '新增的页面形态：这一层只放文件夹，没有零散内容；没归属的照片、Checklist、文件在 General（排第一，空了隐藏）。'; }
+      else if (isGen(id)){ t = 'General（系统默认文件夹）'; x = '上一层没归属的内容都在这里。可以改名，不能删除，不能再建子文件夹。'; }
+      else { t = (isProj(id)?'项目':'文件夹') + ' · ' + nameOf(id); x = '现有项目页样式（Photos / Checklists / Docs）。只多了一个「New folder」：建第一个子文件夹后，这一层变成只放文件夹，原有内容进 General。'; }
+      if (S.select){ t = '多选'; x = S.select.kind==='photo' ? '照片多选：可按日期全选；底部面板 Link / PDF / ZIP / Excel / KMZ / Move / Delete。' : (S.select.kind==='tpl' ? 'Checklist 多选：按模板勾选，Move 会把这个模板在当前文件夹里的全部记录一起移走。' : 'Docs 多选：勾选文件后 Move / Delete。'); } } }
+  document.getElementById('exTitle').textContent = '当前页面：' + t; document.getElementById('exText').textContent = x;
+}
+
+load(); freshUI(); render();
+
+</script>
+
+</body>
+</html>
